@@ -1,29 +1,155 @@
 import React, { Component } from 'react';
 import Square from './Square';
 
+const randomNumberBetween = (min, max) =>
+    Math.floor(Math.random() * (max - min + 1)) + min;
+
+const isPositionBomb = (bombPositions, targetPosition) => bombPositions.some(position => {
+    return position.x === targetPosition.x
+        && position.y === targetPosition.y;
+});
+
+const buildBombPositions = () => {
+    let bombPositions = [];
+
+    while (bombPositions.length !== 10) {
+
+        let newBombPosition = {
+            x: randomNumberBetween(0, 10),
+            y: randomNumberBetween(0, 10)
+        };
+
+        if (!isPositionBomb(bombPositions, newBombPosition)) {
+            bombPositions.push(newBombPosition);
+        }
+
+    }
+
+    return bombPositions;
+
+};
+
+const countNeighborBombs = (bombPositions, position) => {
+    let neighborBombs = 0;
+
+    // upper row
+
+    if ((position.x > 0 && position.y > 0)
+        && (isPositionBomb(bombPositions, {
+            x: position.x - 1,
+            y: position.y - 1
+        }))
+    ) {
+        neighborBombs++;
+    }
+
+    if ((position.y > 0)
+        && (isPositionBomb(bombPositions, {
+            x: position.x,
+            y: position.y - 1
+        }))
+    ) {
+        neighborBombs++;
+    }
+
+    if ((position.x < 9 && position.y > 0)
+        && (isPositionBomb(bombPositions, {
+            x: position.x + 1,
+            y: position.y - 1
+        }))
+    ) {
+        neighborBombs++;
+    }
+
+    // same row
+
+    if ((position.x > 0)
+        && (isPositionBomb(bombPositions, {
+            x: position.x - 1,
+            y: position.y
+        }))
+    ) {
+        neighborBombs++;
+    }
+
+    if ((position.x < 9)
+        && (isPositionBomb(bombPositions, {
+            x: position.x + 1,
+            y: position.y
+        }))
+    ) {
+        neighborBombs++;
+    }
+
+    // lower row
+
+    if ((position.x > 0 && position.y < 9)
+        && (isPositionBomb(bombPositions, {
+            x: position.x - 1,
+            y: position.y + 1
+        }))
+    ) {
+        neighborBombs++;
+    }
+
+    if ((position.y < 9)
+        && (isPositionBomb(bombPositions, {
+            x: position.x,
+            y: position.y + 1
+        }))
+    ) {
+        neighborBombs++;
+    }
+
+    if ((position.x < 9 && position.y < 9)
+        && (isPositionBomb(bombPositions, {
+            x: position.x + 1,
+            y: position.y + 1
+        }))
+    ) {
+        neighborBombs++;
+    }
+
+    return neighborBombs;
+
+}
+
 class Board extends Component {
 
-    renderSquare({x, y}) {
+    constructor(props) {
+        super(props);
+
+        this.bombPositions = buildBombPositions();
+    }
+
+    renderSquare(position) {
+
+        const keyValue = position.x * 10 + position.y;
+
+        const positionValue = (isPositionBomb(this.bombPositions, position)
+            ? 'B'
+            : countNeighborBombs(this.bombPositions, position)
+        );
 
         return (
             <Square
-                key={x * 10 + y}
-                value={x * 10 + y}
+                key={keyValue}
+                value={positionValue}
             ></Square>
         );
 
-    }
+    };
 
     render() {
 
         return (
             <div>
                 {
-                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(row => {
+                    [0,1,2,3,4,5,6,7,8,9].map(row => {
                         return (
                             <div key={row} className="board-row">
                                 {
-                                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(column => {
+                                    [0,1,2,3,4,5,6,7,8,9].map(column => {
                                         return this.renderSquare({
                                             x: row,
                                             y: column
