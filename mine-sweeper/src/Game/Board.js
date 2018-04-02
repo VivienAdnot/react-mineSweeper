@@ -120,6 +120,16 @@ class Board extends Component {
         super(props);
 
         this.bombPositions = buildBombPositions();
+
+        this.state = {
+            squaresInfos: Array.from({length: 10}, () => {
+                return Array.from({length: 10}, () => {
+                    return {
+                        status: 'hidden'
+                    }
+                });
+            })
+        }
     }
 
     renderSquare(position) {
@@ -145,11 +155,11 @@ class Board extends Component {
         return (
             <div>
                 {
-                    [0,1,2,3,4,5,6,7,8,9].map(row => {
+                    Array.from({length: 10}, (v, k) => k).map(row => {
                         return (
                             <div key={row} className="board-row">
                                 {
-                                    [0,1,2,3,4,5,6,7,8,9].map(column => {
+                                    Array.from({length: 10}, (v, k) => k).map(column => {
                                         return this.renderSquare({
                                             x: row,
                                             y: column
