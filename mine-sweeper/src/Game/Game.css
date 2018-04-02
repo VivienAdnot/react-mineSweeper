@@ -1,0 +1,16 @@
+.game {
+    display: flex;
+    flex-direction: row;
+}
+
+.board-row:after {
+    clear: both;
+    content: '';
+    display: table;
+}
+
+.square {
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
+}
