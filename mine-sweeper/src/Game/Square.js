@@ -2,33 +2,11 @@ import React, { Component } from 'react';
 
 class Square extends Component {
 
-    state = {
-        squareStatus: 'hidden' // hidden, leftClicked, marked
-    };
-
-    onLeftClick = () => {
-        this.setState((prevState) => {
-            if (prevState.squareStatus === 'hidden') {
-                console.log(`left click: ${this.props.value}`);
-                return { squareStatus: 'leftClicked' };
-            }
-        });
-    }
-
-    onRightClick = () => {
-        this.setState((prevState) => {
-            if (prevState.squareStatus === 'hidden') {
-                console.log(`right click: ${this.props.value}`);
-                return { squareStatus: 'marked' };
-            }
-        });
-    }
-
     renderSwitch = () => {
-        switch (this.state.squareStatus) {
+        switch (this.props.visibility) {
             case 'hidden':
                 return '?';
-            case 'leftClicked':
+            case 'visible':
                 return this.props.value;
             case 'marked':
                 return 'M';
@@ -40,8 +18,8 @@ class Square extends Component {
 
         return (
             <button
-                onClick={this.onLeftClick}
-                onContextMenu={this.onRightClick}
+                onClick={() => this.props.onLeftClick(this.props.position)}
+                onContextMenu={() => this.props.onRightClick(this.props.position)}
                 className="square"
             >
                 {this.renderSwitch()}

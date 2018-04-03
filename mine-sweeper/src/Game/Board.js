@@ -112,7 +112,24 @@ const countNeighborBombs = (bombPositions, position) => {
 
     return neighborBombs;
 
-}
+};
+
+const buildMap = (bombPositions) => {
+    let positions = Array.from({length: 10}, (value, x) => {
+        return Array.from({length: 10}, (value, y) => {
+            return {
+                position: {x, y},
+                value: (isPositionBomb(bombPositions, {x, y})
+                    ? 'B'
+                    : countNeighborBombs(bombPositions, {x, y})
+                ),
+                visibility: 'hidden' // visible, marked
+            };
+        });
+    });
+
+    return positions;
+};
 
 class Board extends Component {
 
@@ -122,48 +139,114 @@ class Board extends Component {
         this.bombPositions = buildBombPositions();
 
         this.state = {
-            squaresInfos: Array.from({length: 10}, () => {
-                return Array.from({length: 10}, () => {
-                    return {
-                        status: 'hidden'
-                    }
-                });
-            })
-        }
+            map: buildMap(this.bombPositions),
+            gameStatus: 'playing' //won, lost
+        };
     }
 
-    renderSquare(position) {
+    renderSquare(squareInfo) {
 
-        const keyValue = position.x * 10 + position.y;
-
-        const positionValue = (isPositionBomb(this.bombPositions, position)
-            ? 'B'
-            : countNeighborBombs(this.bombPositions, position)
-        );
+        const keyValue = squareInfo.position.x * 10 + squareInfo.position.y;
 
         return (
             <Square
                 key={keyValue}
-                value={positionValue}
+                position={squareInfo.position}
+                value={squareInfo.value}
+                visibility={squareInfo.visibility}
+                onLeftClick={this.onSquareLeftClick}
+                onRightClick={this.onSquareRightClick}
             ></Square>
         );
 
     };
+
+    onSquareLeftClick = (position) => {
+        console.log(`board onSquareLeftClick reached: ${JSON.stringify(position)}`);
+
+        this.setState((prevState) => {
+
+            switch(prevState.map[position.x][position.y].visibility) {
+                case 'hidden':
+
+                    prevState.map[position.x][position.y].visibility = 'visible';
+                    return {
+                        map: prevState.map
+                    }
+                default:
+                    return null;
+            }
+
+        }, () => {
+            const gameStatus = this.computeGameStatus();
+            console.log(gameStatus);
+            if (['won', 'lost'].includes(gameStatus)) {
+                alert(this.gameStatus);
+            }
+        });
+    }
+
+    onSquareRightClick = (position) => {
+        console.log(`board onSquareRightClick reached: ${JSON.stringify(position)}`);
+
+        this.setState((prevState) => {
+
+            switch(prevState.map[position.x][position.y].visibility) {
+            case 'hidden':
+
+                prevState.map[position.x][position.y].visibility = 'marked';
+                return {
+                    map: prevState.map
+                }
+            case 'marked':
+                prevState.map[position.x][position.y].visibility = 'hidden';
+                return {
+                    map: prevState.map
+                }
+            default:
+                return null;
+            }
+
+        });
+    }
+
+    computeGameStatus = () => {
+        const areAllNumberSquaresDisplayed = () => {
+            const squaresSum = 100;
+
+            const visibleNumberSquares = this.state.map.filter((squareInfo) => {
+                return squareInfo.value !== 'B' && squareInfo.visibility === 'visible';
+            });
+
+            return squaresSum === visibleNumberSquares.length;
+        };
+
+        const isBombVisible = () => {
+            return this.state.map.some((squareInfo) => {
+                console.log(`isBombVisible: ${JSON.stringify(squareInfo)}`)
+                return squareInfo.value === 'B' && squareInfo.visibility === 'visible';
+            });
+        }
+
+        if (isBombVisible()) {
+            return 'lost';
+        } else if (areAllNumberSquaresDisplayed()) {
+            return 'won';
+        }
+        return 'playing';
+    }
 
     render() {
 
         return (
             <div>
                 {
-                    Array.from({length: 10}, (v, k) => k).map(row => {
+                    Array.from({length: 10}, (value, index) => index).map(x => {
                         return (
-                            <div key={row} className="board-row">
+                            <div key={x} className="board-row">
                                 {
-                                    Array.from({length: 10}, (v, k) => k).map(column => {
-                                        return this.renderSquare({
-                                            x: row,
-                                            y: column
-                                        });
+                                    Array.from({length: 10}, (value, index) => index).map(y => {
+                                        return this.renderSquare(this.state.map[x][y]);
                                     })
                                 }
                             </div>
