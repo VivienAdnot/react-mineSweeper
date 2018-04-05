@@ -139,7 +139,7 @@ class Board extends Component {
         this.bombPositions = buildBombPositions();
 
         this.state = {
-            map: buildMap(this.bombPositions),
+            boardMap: buildMap(this.bombPositions),
             gameStatus: 'playing' //won, lost
         };
     }
@@ -166,12 +166,12 @@ class Board extends Component {
 
         this.setState((prevState) => {
 
-            switch(prevState.map[position.x][position.y].visibility) {
+            switch(prevState.boardMap[position.x][position.y].visibility) {
                 case 'hidden':
 
-                    prevState.map[position.x][position.y].visibility = 'visible';
+                    prevState.boardMap[position.x][position.y].visibility = 'visible';
                     return {
-                        map: prevState.map
+                        boardMap: prevState.boardMap
                     }
                 default:
                     return null;
@@ -181,7 +181,7 @@ class Board extends Component {
             const gameStatus = this.computeGameStatus();
             console.log(gameStatus);
             if (['won', 'lost'].includes(gameStatus)) {
-                alert(this.gameStatus);
+                alert(gameStatus);
             }
         });
     }
@@ -191,17 +191,17 @@ class Board extends Component {
 
         this.setState((prevState) => {
 
-            switch(prevState.map[position.x][position.y].visibility) {
+            switch(prevState.boardMap[position.x][position.y].visibility) {
             case 'hidden':
 
-                prevState.map[position.x][position.y].visibility = 'marked';
+                prevState.boardMap[position.x][position.y].visibility = 'marked';
                 return {
-                    map: prevState.map
+                    map: prevState.boardMap
                 }
             case 'marked':
-                prevState.map[position.x][position.y].visibility = 'hidden';
+                prevState.boardMap[position.x][position.y].visibility = 'hidden';
                 return {
-                    map: prevState.map
+                    map: prevState.boardMap
                 }
             default:
                 return null;
@@ -211,22 +211,33 @@ class Board extends Component {
     }
 
     computeGameStatus = () => {
-        const areAllNumberSquaresDisplayed = () => {
-            const squaresSum = 100;
-
-            const visibleNumberSquares = this.state.map.filter((squareInfo) => {
-                return squareInfo.value !== 'B' && squareInfo.visibility === 'visible';
-            });
-
-            return squaresSum === visibleNumberSquares.length;
-        };
-
         const isBombVisible = () => {
-            return this.state.map.some((squareInfo) => {
-                console.log(`isBombVisible: ${JSON.stringify(squareInfo)}`)
-                return squareInfo.value === 'B' && squareInfo.visibility === 'visible';
-            });
+            return this.state.boardMap.some((row) => {
+
+                return row.some((squareInfo) => {
+                    return squareInfo.value === 'B' && squareInfo.visibility === 'visible';
+                });
+
+            })
+
         }
+
+        const areAllNumberSquaresDisplayed = () => {
+            const numberSquaresSum = 100 - this.bombPositions.length;
+
+            const visibleNumberSquares = this.state.boardMap.reduce((acc, row) => {
+
+                const visibleNumberSquaresPerRow = row.filter((squareInfo) => {
+                    return squareInfo.value !== 'B' && squareInfo.visibility === 'visible';
+                });
+
+                return acc + visibleNumberSquaresPerRow.length;
+            }, 0);
+
+            console.log(visibleNumberSquares.length);
+
+            return numberSquaresSum === visibleNumberSquares;
+        };
 
         if (isBombVisible()) {
             return 'lost';
@@ -246,7 +257,7 @@ class Board extends Component {
                             <div key={x} className="board-row">
                                 {
                                     Array.from({length: 10}, (value, index) => index).map(y => {
-                                        return this.renderSquare(this.state.map[x][y]);
+                                        return this.renderSquare(this.state.boardMap[x][y]);
                                     })
                                 }
                             </div>
