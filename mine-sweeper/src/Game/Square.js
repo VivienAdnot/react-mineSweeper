@@ -20,6 +20,7 @@ class Square extends Component {
             <button
                 onClick={() => this.props.onLeftClick(this.props.position)}
                 onContextMenu={() => this.props.onRightClick(this.props.position)}
+                onDoubleClick={() => this.props.onDblClick(this.props.position)}
                 className="square"
             >
                 {this.renderSwitch()}

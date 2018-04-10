@@ -8,7 +8,10 @@ class Game extends Component {
         return (
             <div className="game">
                 <div className="game-board">
-                    <Board></Board>
+                    <Board
+                        rows={10}
+                        columns={10}
+                    ></Board>
                 </div>
             </div>
         );

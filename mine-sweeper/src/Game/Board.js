@@ -9,14 +9,15 @@ const isPositionBomb = (bombPositions, targetPosition) => bombPositions.some(pos
         && position.y === targetPosition.y;
 });
 
-const buildBombPositions = () => {
+const buildBombPositions = (rowSize, columnSize) => {
     let bombPositions = [];
+    const bombAmount = rowSize;
 
-    while (bombPositions.length !== 10) {
+    while (bombPositions.length !== bombAmount) {
 
         let newBombPosition = {
-            x: randomNumberBetween(0, 10),
-            y: randomNumberBetween(0, 10)
+            x: randomNumberBetween(0, rowSize - 1),
+            y: randomNumberBetween(0, columnSize -1)
         };
 
         if (!isPositionBomb(bombPositions, newBombPosition)) {
@@ -29,88 +30,78 @@ const buildBombPositions = () => {
 
 };
 
-const countNeighborBombs = (bombPositions, position) => {
-    let neighborBombs = 0;
+const getNeighborPositions = (position, rowSize, columnSize) => {
 
-    // upper row
-
-    if ((position.x > 0 && position.y > 0)
-        && (isPositionBomb(bombPositions, {
-            x: position.x - 1,
-            y: position.y - 1
-        }))
-    ) {
-        neighborBombs++;
+    const isOutOfBounds = (position) => {
+        return (
+            position.x < 0
+            || position.x > (rowSize - 1)
+            || position.y < 0
+            || position.y > (columnSize - 1)
+        );
     }
 
-    if ((position.y > 0)
-        && (isPositionBomb(bombPositions, {
+    let neighborPositionsRules = [
+        // upper row
+        (position) => ({
+            x: position.x - 1,
+            y: position.y - 1
+        }),
+        (position) => ({
             x: position.x,
             y: position.y - 1
-        }))
-    ) {
-        neighborBombs++;
-    }
-
-    if ((position.x < 9 && position.y > 0)
-        && (isPositionBomb(bombPositions, {
+        }),
+        (position) => ({
             x: position.x + 1,
             y: position.y - 1
-        }))
-    ) {
-        neighborBombs++;
-    }
-
-    // same row
-
-    if ((position.x > 0)
-        && (isPositionBomb(bombPositions, {
+        }),
+        // middle row
+        (position) => ({
             x: position.x - 1,
             y: position.y
-        }))
-    ) {
-        neighborBombs++;
-    }
-
-    if ((position.x < 9)
-        && (isPositionBomb(bombPositions, {
+        }),
+        (position) => ({
             x: position.x + 1,
             y: position.y
-        }))
-    ) {
-        neighborBombs++;
-    }
-
-    // lower row
-
-    if ((position.x > 0 && position.y < 9)
-        && (isPositionBomb(bombPositions, {
+        }),
+        // lower row
+        (position) => ({
             x: position.x - 1,
             y: position.y + 1
-        }))
-    ) {
-        neighborBombs++;
-    }
-
-    if ((position.y < 9)
-        && (isPositionBomb(bombPositions, {
+        }),
+        (position) => ({
             x: position.x,
             y: position.y + 1
-        }))
-    ) {
-        neighborBombs++;
-    }
-
-    if ((position.x < 9 && position.y < 9)
-        && (isPositionBomb(bombPositions, {
+        }),
+        (position) => ({
             x: position.x + 1,
             y: position.y + 1
-        }))
-    ) {
-        neighborBombs++;
+        })
+    ];
+
+    let neighborPositions = []
+
+    for (let rule of neighborPositionsRules) {
+
+        const nextPosition = rule(position);
+
+        if (!isOutOfBounds(nextPosition)) {
+
+            neighborPositions.push(nextPosition);
+
+        }
+
     }
 
-    return neighborBombs;
+    return neighborPositions;
+
+}
+
+const getNeighborBombPositions = (bombPositions, position) => {
+
+    return getNeighborPositions(position, this.props.rows, this.props.columns).filter(neighborPosition => {
+        return isPositionBomb(bombPositions, neighborPosition);
+    });
 
 };
 
@@ -120,9 +111,9 @@ const buildMap = (bombPositions) => {
             return {
                 position: {x, y},
                 value: (isPositionBomb(bombPositions, {x, y})
-                    ? 'B'
-                    : countNeighborBombs(bombPositions, {x, y})
-                ),
+                ? 'B'
+                : getNeighborBombPositions(bombPositions, {x, y}).length
+            ),
                 visibility: 'hidden' // visible, marked
             };
         });
@@ -136,12 +127,14 @@ class Board extends Component {
     constructor(props) {
         super(props);
 
-        this.bombPositions = buildBombPositions();
+        this.bombPositions = buildBombPositions(props.rows, props.columns);
 
         this.state = {
             boardMap: buildMap(this.bombPositions),
             gameStatus: 'playing' //won, lost
         };
+
+        this.round = 0;
     }
 
     renderSquare(squareInfo) {
@@ -150,41 +143,52 @@ class Board extends Component {
 
         return (
             <Square
-                key={keyValue}
-                position={squareInfo.position}
-                value={squareInfo.value}
-                visibility={squareInfo.visibility}
-                onLeftClick={this.onSquareLeftClick}
-                onRightClick={this.onSquareRightClick}
+            key={keyValue}
+            position={squareInfo.position}
+            value={squareInfo.value}
+            visibility={squareInfo.visibility}
+            onLeftClick={this.onSquareLeftClick}
+            onRightClick={this.onSquareRightClick}
+            onDblClick={this.onSquareDoubleClick}
             ></Square>
         );
 
     };
 
     onSquareLeftClick = (position) => {
-        console.log(`board onSquareLeftClick reached: ${JSON.stringify(position)}`);
+
+        if (this.state.boardMap[position.x][position.y].visibility !== 'hidden') {
+            return;
+        }
+
+        let positionsToDisplay = [position];
+
+        if (this.state.boardMap[position.x][position.y].value === 0) {
+
+            positionsToDisplay.push(...this.getAllNeighborEmptyPositions(position));
+
+        }
 
         this.setState((prevState) => {
 
-            switch(prevState.boardMap[position.x][position.y].visibility) {
-                case 'hidden':
+            positionsToDisplay.forEach((positionToDisplay) => {
+                prevState.boardMap[positionToDisplay.x][positionToDisplay.y].visibility = 'visible';
+            });
 
-                    prevState.boardMap[position.x][position.y].visibility = 'visible';
-                    return {
-                        boardMap: prevState.boardMap
-                    }
-                default:
-                    return null;
+            return {
+                boardMap: prevState.boardMap
             }
 
         }, () => {
             const gameStatus = this.computeGameStatus();
-            console.log(gameStatus);
+
             if (['won', 'lost'].includes(gameStatus)) {
                 alert(gameStatus);
+                return;
             }
+
         });
-    }
+    };
 
     onSquareRightClick = (position) => {
         console.log(`board onSquareRightClick reached: ${JSON.stringify(position)}`);
@@ -192,23 +196,78 @@ class Board extends Component {
         this.setState((prevState) => {
 
             switch(prevState.boardMap[position.x][position.y].visibility) {
-            case 'hidden':
+                case 'hidden':
 
-                prevState.boardMap[position.x][position.y].visibility = 'marked';
-                return {
-                    map: prevState.boardMap
-                }
-            case 'marked':
-                prevState.boardMap[position.x][position.y].visibility = 'hidden';
-                return {
-                    map: prevState.boardMap
-                }
-            default:
-                return null;
+                    prevState.boardMap[position.x][position.y].visibility = 'marked';
+                    return {
+                        map: prevState.boardMap
+                    }
+
+                case 'marked':
+                    prevState.boardMap[position.x][position.y].visibility = 'hidden';
+                    return {
+                        map: prevState.boardMap
+                    }
+
+                default:
+                    return null;
             }
 
         });
-    }
+    };
+
+    onSquareDoubleClick = (position) => {
+
+        console.log('onSquareDoubleClick reached with', position);
+
+        let targetValue = this.state.boardMap[position.x][position.y].value;
+
+        const isAllowed = (position) => {
+
+            let markedPositions = getNeighborBombPositions(this.bombPositions, position)
+            .filter((neighborPosition) => {
+
+                return this.state.boardMap[neighborPosition.x][neighborPosition.y].visibility === 'marked';
+
+            });
+
+            return targetValue === markedPositions.length;
+
+        };
+
+        if (isAllowed(position)) {
+
+            console.log('onSquareDoubleClick allowed ok');
+
+            this.getNeighborHidenPositions(this.bombPositions, position)
+            .filter(neighborPosition => {
+                return this.state.boardMap[neighborPosition.x][neighborPosition.y].visibility !== 'marked';
+            })
+            .forEach((neighborPosition) => {
+                console.log('new display', neighborPosition);
+
+                this.setState((prevState) => {
+
+                    prevState.boardMap[neighborPosition.x][neighborPosition.y].visibility = 'visible';
+                    return {
+                        boardMap: prevState.boardMap
+                    };
+
+                }, () => {
+                    const gameStatus = this.computeGameStatus();
+
+                    if (['won', 'lost'].includes(gameStatus)) {
+                        alert(gameStatus);
+                    }
+                });
+
+            });
+
+        } else {
+            console.log('onSquareDoubleClick NOT Allowed');
+        }
+
+    };
 
     computeGameStatus = () => {
         const isBombVisible = () => {
@@ -223,7 +282,8 @@ class Board extends Component {
         }
 
         const areAllNumberSquaresDisplayed = () => {
-            const numberSquaresSum = 100 - this.bombPositions.length;
+            const squaresSum = this.state.boardMap.length * this.state.boardMap[0].length;
+            const numberSquaresSum = squaresSum - this.bombPositions.length;
 
             const visibleNumberSquares = this.state.boardMap.reduce((acc, row) => {
 
@@ -234,8 +294,6 @@ class Board extends Component {
                 return acc + visibleNumberSquaresPerRow.length;
             }, 0);
 
-            console.log(visibleNumberSquares.length);
-
             return numberSquaresSum === visibleNumberSquares;
         };
 
@@ -245,7 +303,73 @@ class Board extends Component {
             return 'won';
         }
         return 'playing';
+    };
+
+    getAllNeighborEmptyPositions = (position, knownEmptyPositions = []) => {
+
+        this.round++;
+
+        if (this.round > 15) {
+            console.log("ROUND STOP");
+            return;
+        }
+
+        if (!knownEmptyPositions.length) {
+
+            knownEmptyPositions.push(position);
+
+        }
+
+        console.log(`getAllNeighborEmptyPositions called with x:${position.x},y:${position.y} - ${JSON.stringify(knownEmptyPositions)}`);
+
+        let nextEmptyPositions = this.getNeighborEmptyPositions(position)
+        .filter(neighborPosition => {
+            return this.state.boardMap[neighborPosition.x][neighborPosition.y].visibility === 'hidden'
+        });
+
+        //console.log('first filter', nextEmptyPositions);
+
+        let nextUnknownEmptyPositions = nextEmptyPositions.filter(neighborPosition => {
+            return !knownEmptyPositions.some(knownPosition => {
+                return knownPosition.x === neighborPosition.x
+                    && knownPosition.y === neighborPosition.y;
+            });
+        });
+
+        console.log('nextUnknownEmptyPositions', nextUnknownEmptyPositions);
+
+        if (nextUnknownEmptyPositions.length) {
+            knownEmptyPositions.push(...nextUnknownEmptyPositions);
+        }
+
+        //console.log('getAllNeighborEmptyPositions after filter', knownEmptyPositions);
+
+        for (let emptyPosition of nextUnknownEmptyPositions) {
+
+            let next = this.getAllNeighborEmptyPositions(emptyPosition, knownEmptyPositions);
+            knownEmptyPositions.push(...next);
+
+            //console.log('third filter', knownEmptyPositions);
+        }
+
+        console.log('before return', knownEmptyPositions);
+
+        return knownEmptyPositions;
     }
+
+    getNeighborHidenPositions = (bombPositions, position) => {
+
+        return getNeighborPositions(position, this.props.rows, this.props.columns).filter(neighborPosition => {
+            return this.state.boardMap[neighborPosition.x][neighborPosition.y].visibility === 'hidden';
+        });
+
+    };
+
+    getNeighborEmptyPositions = (position) => {
+        return getNeighborPositions(position, this.props.rows, this.props.columns).filter(neighborPosition => {
+            return this.state.boardMap[neighborPosition.x][neighborPosition.y].value === 0;
+        });
+    };
 
     render() {
 
