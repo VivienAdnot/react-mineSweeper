@@ -105,7 +105,7 @@ const getNeighborBombPositions = (bombPositions, position) => {
 
 };
 
-const buildRandomMap = (bombPositions) => {
+const buildMap = (bombPositions) => {
     let positions = Array.from({length: 10}, (value, x) => {
         return Array.from({length: 10}, (value, y) => {
             return {
@@ -122,7 +122,7 @@ const buildRandomMap = (bombPositions) => {
     return positions;
 };
 
-const buildMap = () => {
+const buildFixedMap = () => {
     let boardMap = Array.from({length: 10}, (value, x) => {
         return Array.from({length: 10}, (value, y) => {
             return {
@@ -155,6 +155,7 @@ const buildMap = () => {
 class Board extends Component {
 
     constructor(props) {
+
         super(props);
 
         this.bombPositions = buildBombPositions();
@@ -164,7 +165,6 @@ class Board extends Component {
             gameStatus: 'playing' //won, lost
         };
 
-        this.round = 0;
     }
 
     renderSquare(squareInfo) {
@@ -337,27 +337,16 @@ class Board extends Component {
 
     getAllNeighborEmptyPositions = (position, knownEmptyPositions = []) => {
 
-        this.round++;
-
         if (!knownEmptyPositions.length) {
 
             knownEmptyPositions.push(position);
 
         }
 
-        console.log(`round ${this.round}, search position ${this.getCodeFromPosition(position)}, positions known: ${JSON.stringify(knownEmptyPositions.map(x => this.getCodeFromPosition(x)))}`);
-
-        if (this.round > 15) {
-            console.log("ROUND STOP");
-            return;
-        }
-
         let nextEmptyPositions = this.getNeighborEmptyPositions(position)
         .filter(neighborPosition => {
             return this.state.boardMap[neighborPosition.x][neighborPosition.y].visibility === 'hidden'
         });
-
-        //console.log('first filter', nextEmptyPositions);
 
         let nextUnknownEmptyPositions = nextEmptyPositions.filter(neighborPosition => {
             return !knownEmptyPositions.some(knownPosition => {
@@ -366,32 +355,26 @@ class Board extends Component {
             });
         });
 
-        if (nextUnknownEmptyPositions.length) {
-            console.log('nextUnknownEmptyPositions', knownEmptyPositions.map(x => this.getCodeFromPosition(x)));
-            knownEmptyPositions.push(...nextUnknownEmptyPositions);
-            console.log('after update known positions', knownEmptyPositions.map(x => this.getCodeFromPosition(x)));
-        } else {
-            console.log('NO nextUnknownEmptyPositions found');
-            console.log('RETURN', knownEmptyPositions.map(x => this.getCodeFromPosition(x)));
+        if (!nextUnknownEmptyPositions.length) {
             return knownEmptyPositions;
         }
+
+        knownEmptyPositions.push(...nextUnknownEmptyPositions);
 
         for (let emptyPosition of nextUnknownEmptyPositions) {
 
             let next = this.getAllNeighborEmptyPositions(emptyPosition, knownEmptyPositions);
-            knownEmptyPositions.push(...next);
+            knownEmptyPositions = [...next];
         }
-
-        console.log('END RETURN', knownEmptyPositions.map(x => this.getCodeFromPosition(x)));
 
         return knownEmptyPositions;
     }
 
-    getCodeFromPosition = (position) => {
+    /*getCodeFromPosition = (position) => {
         const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
         return `${letters[position.y]}${position.x + 1}`;
-    }
+    }*/
 
     getNeighborHidenPositions = (bombPositions, position) => {
 
