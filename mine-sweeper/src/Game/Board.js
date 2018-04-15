@@ -165,11 +165,18 @@ class Board extends Component {
             gameStatus: 'playing' //won, lost
         };
 
+        this.positionLost = null;
+
     }
 
     renderSquare(squareInfo) {
 
         const keyValue = squareInfo.position.x * 10 + squareInfo.position.y;
+        const isPositionLost = this.positionLost
+            && squareInfo.position.x === this.positionLost.x
+            && squareInfo.position.y === this.positionLost.y;
+
+        const isBomb = squareInfo.value === 'B';
 
         return (
             <Square
@@ -177,6 +184,8 @@ class Board extends Component {
             position={squareInfo.position}
             value={squareInfo.value}
             visibility={squareInfo.visibility}
+            isPositionLost={isPositionLost}
+            isBomb={isBomb}
             onLeftClick={this.onSquareLeftClick}
             onRightClick={this.onSquareRightClick}
             onDblClick={this.onSquareDoubleClick}
@@ -195,7 +204,8 @@ class Board extends Component {
 
         if (this.state.boardMap[position.x][position.y].value === 0) {
 
-            positionsToDisplay.push(...this.getAllNeighborEmptyPositions(position));
+            positionsToDisplay = this.getAllNeighborEmptyPositions(position);
+            positionsToDisplay = this.getEmptyZoneNextNeighbours(positionsToDisplay);
 
         }
 
@@ -212,12 +222,31 @@ class Board extends Component {
         }, () => {
             const gameStatus = this.computeGameStatus();
 
+            if (gameStatus === 'lost') {
+                this.showBombs(position);
+                this.positionLost = position;
+            }
+
             if (['won', 'lost'].includes(gameStatus)) {
                 alert(gameStatus);
                 return;
             }
 
         });
+    };
+
+    showBombs = (lostPosition) => {
+        this.setState((prevState) => {
+
+            this.bombPositions.forEach((bombPosition) => {
+                prevState.boardMap[bombPosition.x][bombPosition.y].visibility = 'visible';
+            });
+
+            return {
+                boardMap: prevState.boardMap
+            }
+
+        })
     };
 
     onSquareRightClick = (position) => {
@@ -248,8 +277,6 @@ class Board extends Component {
 
     onSquareDoubleClick = (position) => {
 
-        console.log('onSquareDoubleClick reached with', position);
-
         let targetValue = this.state.boardMap[position.x][position.y].value;
 
         const isAllowed = (position) => {
@@ -265,37 +292,50 @@ class Board extends Component {
 
         };
 
-        if (isAllowed(position)) {
+        if (!isAllowed(position)) {
+            return;
+        }
 
-            console.log('onSquareDoubleClick allowed ok');
+        let positionsToDisplay = this.getNeighborHiddenPositions(position)
+        .filter(neighborPosition => {
+            return this.state.boardMap[neighborPosition.x][neighborPosition.y].visibility !== 'marked';
+        });
 
-            this.getNeighborHidenPositions(this.bombPositions, position)
-            .filter(neighborPosition => {
-                return this.state.boardMap[neighborPosition.x][neighborPosition.y].visibility !== 'marked';
-            })
-            .forEach((neighborPosition) => {
-                console.log('new display', neighborPosition);
+        let emptyNeighbourPositions = positionsToDisplay
+        .filter(neighborPosition => {
+            return this.state.boardMap[neighborPosition.x][neighborPosition.y].value === 0;
+        });
 
-                this.setState((prevState) => {
+        if (emptyNeighbourPositions.length) {
 
-                    prevState.boardMap[neighborPosition.x][neighborPosition.y].visibility = 'visible';
-                    return {
-                        boardMap: prevState.boardMap
-                    };
+            emptyNeighbourPositions = this.getAllNeighborEmptyPositions(
+                emptyNeighbourPositions[0],
+                emptyNeighbourPositions);
 
-                }, () => {
-                    const gameStatus = this.computeGameStatus();
+            const emptyZone = this.getEmptyZoneNextNeighbours(emptyNeighbourPositions);
 
-                    if (['won', 'lost'].includes(gameStatus)) {
-                        alert(gameStatus);
-                    }
-                });
+            positionsToDisplay.push(...emptyZone);
+        }
 
+        this.setState((prevState) => {
+
+            positionsToDisplay.forEach((positionToDisplay) => {
+                prevState.boardMap[positionToDisplay.x][positionToDisplay.y].visibility = 'visible';
             });
 
-        } else {
-            console.log('onSquareDoubleClick NOT Allowed');
-        }
+            return {
+                boardMap: prevState.boardMap
+            }
+
+        }, () => {
+            const gameStatus = this.computeGameStatus();
+
+            if (['won', 'lost'].includes(gameStatus)) {
+                alert(gameStatus);
+                return;
+            }
+
+        });
 
     };
 
@@ -343,16 +383,19 @@ class Board extends Component {
 
         }
 
-        let nextEmptyPositions = this.getNeighborEmptyPositions(position)
+        let nextUnknownEmptyPositions = this.getNeighborEmptyPositions(position)
         .filter(neighborPosition => {
             return this.state.boardMap[neighborPosition.x][neighborPosition.y].visibility === 'hidden'
-        });
+        })
+        .filter(neighborPosition => {
 
-        let nextUnknownEmptyPositions = nextEmptyPositions.filter(neighborPosition => {
             return !knownEmptyPositions.some(knownPosition => {
+
                 return knownPosition.x === neighborPosition.x
                     && knownPosition.y === neighborPosition.y;
+
             });
+
         });
 
         if (!nextUnknownEmptyPositions.length) {
@@ -370,13 +413,54 @@ class Board extends Component {
         return knownEmptyPositions;
     }
 
-    /*getCodeFromPosition = (position) => {
+    getEmptyZoneNextNeighbours = (emptyZone) => {
+
+        let positionsToDisplay = emptyZone;
+        let numberPositionsDiscovered = []
+
+        for (let knownEmptyPosition of positionsToDisplay) {
+
+            let numberHiddenNeighbours = this.getNeighborHiddenPositions(knownEmptyPosition)
+            .filter(numberHiddenNeighbour => {
+
+                return !positionsToDisplay.some(knownPosition => {
+
+                    return knownPosition.x === numberHiddenNeighbour.x
+                        && knownPosition.y === numberHiddenNeighbour.y
+
+                });
+
+            })
+            .filter(numberHiddenNeighbour => {
+
+                return !numberPositionsDiscovered.some(numberPosition => {
+
+                    return numberPosition.x === numberHiddenNeighbour.x
+                        && numberPosition.y === numberHiddenNeighbour.y
+
+                });
+
+            });
+
+            numberPositionsDiscovered.push(...numberHiddenNeighbours);
+
+        }
+
+        positionsToDisplay.push(...numberPositionsDiscovered);
+        return positionsToDisplay;
+    }
+
+    getCodeFromPosition = (position) => {
         const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
         return `${letters[position.y]}${position.x + 1}`;
-    }*/
+    }
 
-    getNeighborHidenPositions = (bombPositions, position) => {
+    getCodeFromPositions = (positions) => {
+        return positions.map(position => this.getCodeFromPosition(position));
+    }
+
+    getNeighborHiddenPositions = (position) => {
 
         return getNeighborPositions(position, this.props.rows, this.props.columns).filter(neighborPosition => {
             return this.state.boardMap[neighborPosition.x][neighborPosition.y].visibility === 'hidden';

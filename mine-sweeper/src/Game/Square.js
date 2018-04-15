@@ -1,11 +1,12 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
+import './Square.css';
 
-class Square extends Component {
+class Square extends PureComponent {
 
-    renderSwitch = () => {
+    getValue = () => {
         switch (this.props.visibility) {
             case 'hidden':
-                return '?';
+                return 'none';
             case 'visible':
                 return this.props.value;
             case 'marked':
@@ -16,14 +17,25 @@ class Square extends Component {
 
     render() {
 
+        let value = this.getValue();
+
+        let fullClassName = `square square-${this.props.visibility} square-value-${value}`;
+
+        if (this.props.isPositionLost) {
+            fullClassName += ' bomb-lost';
+        }
+
         return (
             <button
                 onClick={() => this.props.onLeftClick(this.props.position)}
-                onContextMenu={() => this.props.onRightClick(this.props.position)}
+                onContextMenu={(ev) => {
+                    ev.preventDefault();
+                    this.props.onRightClick(this.props.position);
+                }}
                 onDoubleClick={() => this.props.onDblClick(this.props.position)}
-                className="square"
+                className={fullClassName}
             >
-                {this.renderSwitch()}
+                {value}
             </button>
         );
 
