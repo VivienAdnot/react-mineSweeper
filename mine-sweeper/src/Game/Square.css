@@ -6,14 +6,9 @@
     outline: none;
 }
 
-.square.bomb-clicked {
-    background: crimson;
+.square.bomb-lost {
+    background-color: crimson;
 }
-
-/*.square-visible.bomb {
-    color: transparent;
-    background: url('https://cdn.wikimg.net/en/strategywiki/images/7/7e/Minesweeper_icon.png');
-}*/
 
 .square-visible,
 .square-marked {
@@ -36,8 +31,22 @@
     border-bottom-color: #9dd6e1;
 }
 
+.square-value-B {
+    background-image: url('../img/Mine.png');
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.square-value-M {
+    background-image: url('../img/Flag.png');
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 .square-value-none,
-.square-value-0 {
+.square-value-0,
+.square-value-B,
+.square-value-M {
     color: transparent;
 }
 

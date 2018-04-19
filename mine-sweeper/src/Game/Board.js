@@ -9,15 +9,14 @@ const isPositionBomb = (bombPositions, targetPosition) => bombPositions.some(pos
         && position.y === targetPosition.y;
 });
 
-const buildBombPositions = () => {
+const buildBombPositions = (rowsLength, columnsLength, bombAmount) => {
     let bombPositions = [];
-    const bombAmount = 10;
 
     while (bombPositions.length !== bombAmount) {
 
         let newBombPosition = {
-            x: randomNumberBetween(0, 9),
-            y: randomNumberBetween(0, 9)
+            x: randomNumberBetween(0, rowsLength - 1),
+            y: randomNumberBetween(0, columnsLength -1)
         };
 
         if (!isPositionBomb(bombPositions, newBombPosition)) {
@@ -30,14 +29,14 @@ const buildBombPositions = () => {
 
 };
 
-const getNeighborPositions = (position) => {
+const getNeighborPositions = (position, rowsLength, columnsLength) => {
 
     const isOutOfBounds = (position) => {
         return (
             position.x < 0
-            || position.x > (9)
+            || position.x > (rowsLength - 1)
             || position.y < 0
-            || position.y > (9)
+            || position.y > (columnsLength - 1)
         );
     }
 
@@ -105,9 +104,9 @@ const getNeighborBombPositions = (bombPositions, position) => {
 
 };
 
-const buildMap = (bombPositions) => {
-    let positions = Array.from({length: 10}, (value, x) => {
-        return Array.from({length: 10}, (value, y) => {
+const buildMap = (bombPositions, rowsLength, columnsLength) => {
+    let positions = Array.from({length: rowsLength}, (value, x) => {
+        return Array.from({length: columnsLength}, (value, y) => {
             return {
                 position: {x, y},
                 value: (isPositionBomb(bombPositions, {x, y})
@@ -122,48 +121,21 @@ const buildMap = (bombPositions) => {
     return positions;
 };
 
-const buildFixedMap = () => {
-    let boardMap = Array.from({length: 10}, (value, x) => {
-        return Array.from({length: 10}, (value, y) => {
-            return {
-                position: {x, y},
-                value: 1,
-                visibility: 'hidden' // visible, marked
-            };
-        });
-    });
-
-    let zerosPositions = [
-        { x: 0, y: 1 },
-        { x: 0, y: 2 },
-
-        { x: 1, y: 1 },
-        { x: 1, y: 2 },
-        { x: 1, y: 3 },
-
-        { x: 2, y: 1 },
-        { x: 3, y: 1 }
-    ];
-
-    zerosPositions.forEach(zeroPosition => {
-        boardMap[zeroPosition.x][zeroPosition.y].value = 0;
-    });
-
-    return boardMap;
-}
-
 class Board extends Component {
 
     constructor(props) {
 
         super(props);
 
-        this.bombPositions = buildBombPositions();
+        this.bombPositions = buildBombPositions(props.rowsLength, props.columnsLength, props.bombAmount);
+        console.log('bombPositions', this.bombPositions.map(this.getCodeFromPosition));
 
         this.state = {
-            boardMap: buildMap(this.bombPositions),
+            boardMap: buildMap(this.bombPositions, props.rowsLength, props.columnsLength),
             gameStatus: 'playing' //won, lost
         };
+
+        console.log('boardMap', this.state.boardMap);
 
         this.positionLost = null;
 
@@ -171,7 +143,8 @@ class Board extends Component {
 
     renderSquare(squareInfo) {
 
-        const keyValue = squareInfo.position.x * 10 + squareInfo.position.y;
+        const keyValue = squareInfo.position.x * this.state.boardMap[0].length + squareInfo.position.y;
+
         const isPositionLost = this.positionLost
             && squareInfo.position.x === this.positionLost.x
             && squareInfo.position.y === this.positionLost.y;
@@ -223,19 +196,44 @@ class Board extends Component {
             const gameStatus = this.computeGameStatus();
 
             if (gameStatus === 'lost') {
+
                 this.showBombs(position);
                 this.positionLost = position;
+
+            } else if (gameStatus === 'won') {
+
+                this.markAllBombs();
+
             }
 
             if (['won', 'lost'].includes(gameStatus)) {
+
                 alert(gameStatus);
                 return;
+
             }
 
         });
     };
 
+    markAllBombs = () => {
+
+        this.setState((prevState) => {
+
+            this.bombPositions.forEach((bombPosition) => {
+                prevState.boardMap[bombPosition.x][bombPosition.y].visibility = 'marked';
+            });
+
+            return {
+                boardMap: prevState.boardMap
+            }
+
+        });
+
+    };
+
     showBombs = (lostPosition) => {
+
         this.setState((prevState) => {
 
             this.bombPositions.forEach((bombPosition) => {
@@ -247,10 +245,10 @@ class Board extends Component {
             }
 
         })
+
     };
 
     onSquareRightClick = (position) => {
-        console.log(`board onSquareRightClick reached: ${JSON.stringify(position)}`);
 
         this.setState((prevState) => {
 
@@ -281,7 +279,7 @@ class Board extends Component {
 
         const isAllowed = (position) => {
 
-            let markedPositions = getNeighborBombPositions(this.bombPositions, position)
+            let markedPositions = getNeighborPositions(position, this.props.rowsLength, this.props.columnsLength)
             .filter((neighborPosition) => {
 
                 return this.state.boardMap[neighborPosition.x][neighborPosition.y].visibility === 'marked';
@@ -329,6 +327,17 @@ class Board extends Component {
 
         }, () => {
             const gameStatus = this.computeGameStatus();
+
+            if (gameStatus === 'lost') {
+
+                this.showBombs(position);
+                this.positionLost = position;
+
+            } else if (gameStatus === 'won') {
+
+                this.markAllBombs();
+
+            }
 
             if (['won', 'lost'].includes(gameStatus)) {
                 alert(gameStatus);
@@ -451,7 +460,7 @@ class Board extends Component {
     }
 
     getCodeFromPosition = (position) => {
-        const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+        const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'BB', 'CC', 'DD'];
 
         return `${letters[position.y]}${position.x + 1}`;
     }
@@ -462,14 +471,14 @@ class Board extends Component {
 
     getNeighborHiddenPositions = (position) => {
 
-        return getNeighborPositions(position, this.props.rows, this.props.columns).filter(neighborPosition => {
+        return getNeighborPositions(position, this.props.rowsLength, this.props.columnsLength).filter(neighborPosition => {
             return this.state.boardMap[neighborPosition.x][neighborPosition.y].visibility === 'hidden';
         });
 
     };
 
     getNeighborEmptyPositions = (position) => {
-        return getNeighborPositions(position, this.props.rows, this.props.columns).filter(neighborPosition => {
+        return getNeighborPositions(position, this.props.rowsLength, this.props.columnsLength).filter(neighborPosition => {
             return this.state.boardMap[neighborPosition.x][neighborPosition.y].value === 0;
         });
     };
@@ -479,11 +488,11 @@ class Board extends Component {
         return (
             <div>
                 {
-                    Array.from({length: 10}, (value, index) => index).map(x => {
+                    Array.from({length: this.props.rowsLength}, (value, index) => index).map(x => {
                         return (
                             <div key={x} className="board-row">
                                 {
-                                    Array.from({length: 10}, (value, index) => index).map(y => {
+                                    Array.from({length: this.props.columnsLength}, (value, index) => index).map(y => {
                                         return this.renderSquare(this.state.boardMap[x][y]);
                                     })
                                 }

@@ -9,8 +9,9 @@ class Game extends Component {
             <div className="game">
                 <div className="game-board">
                     <Board
-                        rows={10}
-                        columns={10}
+                        rowsLength={16}
+                        columnsLength={30}
+                        bombAmount={99}
                     ></Board>
                 </div>
             </div>
