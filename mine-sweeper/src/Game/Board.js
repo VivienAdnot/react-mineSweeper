@@ -128,14 +128,11 @@ class Board extends Component {
         super(props);
 
         this.bombPositions = buildBombPositions(props.rowsLength, props.columnsLength, props.bombAmount);
-        console.log('bombPositions', this.bombPositions.map(this.getCodeFromPosition));
 
         this.state = {
             boardMap: buildMap(this.bombPositions, props.rowsLength, props.columnsLength),
             gameStatus: 'playing' //won, lost
         };
-
-        console.log('boardMap', this.state.boardMap);
 
         this.positionLost = null;
 
@@ -193,23 +190,16 @@ class Board extends Component {
             }
 
         }, () => {
-            const gameStatus = this.computeGameStatus();
+            this.state.gameStatus = this.computeGameStatus();
 
-            if (gameStatus === 'lost') {
+            if (this.state.gameStatus === 'lost') {
 
                 this.showBombs(position);
                 this.positionLost = position;
 
-            } else if (gameStatus === 'won') {
+            } else if (this.state.gameStatus === 'won') {
 
                 this.markAllBombs();
-
-            }
-
-            if (['won', 'lost'].includes(gameStatus)) {
-
-                alert(gameStatus);
-                return;
 
             }
 
@@ -326,22 +316,17 @@ class Board extends Component {
             }
 
         }, () => {
-            const gameStatus = this.computeGameStatus();
+            this.state.gameStatus = this.computeGameStatus();
 
-            if (gameStatus === 'lost') {
+            if (this.state.gameStatus === 'lost') {
 
                 this.showBombs(position);
                 this.positionLost = position;
 
-            } else if (gameStatus === 'won') {
+            } else if (this.state.gameStatus === 'won') {
 
                 this.markAllBombs();
 
-            }
-
-            if (['won', 'lost'].includes(gameStatus)) {
-                alert(gameStatus);
-                return;
             }
 
         });
@@ -485,8 +470,24 @@ class Board extends Component {
 
     render() {
 
+        let titleRibbon;
+        if (this.state.gameStatus === 'won') {
+
+            titleRibbon = (<div className="alert alert-success">You won the game !</div>);
+
+        } else if (this.state.gameStatus === 'lost') {
+
+            titleRibbon = (<div className="alert alert-danger">You lost the game</div>);
+
+        } else {
+
+            titleRibbon = (<div className="alert alert-warning">Playing</div>);
+
+        }
+
         return (
             <div>
+                {titleRibbon}
                 {
                     Array.from({length: this.props.rowsLength}, (value, index) => index).map(x => {
                         return (
@@ -500,6 +501,14 @@ class Board extends Component {
                         );
                     })
                 }
+
+                {['won', 'lost'].includes(this.state.gameStatus) && (
+                    <div className="result">
+                        <button onClick={this.props.onPlayAgain}>
+                            Play Again
+                        </button>
+                    </div>
+                )}
             </div>
         );
 
