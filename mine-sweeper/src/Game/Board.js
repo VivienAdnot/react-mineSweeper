@@ -159,6 +159,7 @@ class Board extends Component {
             onLeftClick={this.onSquareLeftClick}
             onRightClick={this.onSquareRightClick}
             onDblClick={this.onSquareDoubleClick}
+            clickable={this.state.gameStatus === 'playing'}
             ></Square>
         );
 
@@ -504,7 +505,7 @@ class Board extends Component {
 
                 {['won', 'lost'].includes(this.state.gameStatus) && (
                     <div className="result">
-                        <button onClick={this.props.onPlayAgain}>
+                        <button className="play-again" onClick={this.props.onPlayAgain}>
                             Play Again
                         </button>
                     </div>

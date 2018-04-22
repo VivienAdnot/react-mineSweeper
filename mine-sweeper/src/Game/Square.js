@@ -27,13 +27,20 @@ class Square extends PureComponent {
 
         return (
             <button
-                onClick={() => this.props.onLeftClick(this.props.position)}
+                className={fullClassName}
+
+                onClick={() => {
+                    if (this.props.clickable) this.props.onLeftClick(this.props.position)
+                }}
+
                 onContextMenu={(ev) => {
                     ev.preventDefault();
-                    this.props.onRightClick(this.props.position);
+                    if (this.props.clickable) this.props.onRightClick(this.props.position);
                 }}
-                onDoubleClick={() => this.props.onDblClick(this.props.position)}
-                className={fullClassName}
+
+                onDoubleClick={() => {
+                    if (this.props.clickable) this.props.onDblClick(this.props.position)
+                }}
             >
                 {value}
             </button>

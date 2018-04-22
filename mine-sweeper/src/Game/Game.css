@@ -31,3 +31,24 @@
     border: 1px solid transparent;
     border-radius: .25rem;
 }
+
+.play-again {
+    text-transform: none;
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    outline: none;
+    border: 1px solid #28a745;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    cursor: pointer;
+    color: #28a745;
+    background-color: transparent;
+    background-image: none;
+    margin-top: 1rem;
+}
