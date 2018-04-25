@@ -3,11 +3,11 @@ const path = require('path');
 
 var app = express();
 
-app.use(express.static('../mine-sweeper/build'));
+app.use(express.static(`${__dirname}/build`));
 
 app.get('*', (req, res) => {
 
-    const fileUrl = path.join(__dirname, '../mine-sweeper/build/index.html');
+    const fileUrl = path.join(__dirname, 'build/index.html');
     res.sendfile(fileUrl);
 
 });
