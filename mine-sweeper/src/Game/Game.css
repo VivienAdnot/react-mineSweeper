@@ -9,6 +9,10 @@
     display: table;
 }
 
+.game-board {
+    margin: 0 auto;
+}
+
 .alert-warning {
     color: #856404;
     background-color: #fff3cd;

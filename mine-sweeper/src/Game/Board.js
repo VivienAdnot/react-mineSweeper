@@ -11,6 +11,7 @@ import {
     getEmptyZoneNextNeighbours
 } from './logic/accessors';
 import { getCodeFromPosition, getCodeFromPositions } from './logic/utils';
+//import { initAuth0, proceedAuthentication } from './auth';
 
 class Board extends Component {
 
@@ -292,7 +293,11 @@ class Board extends Component {
         let titleRibbon;
         if (this.state.gameStatus === 'won') {
 
-            titleRibbon = (<div className="alert alert-success">You won the game in {this.state.timer} seconds !</div>);
+            titleRibbon = (
+                <div className="alert alert-success">
+                    You won the game in {this.state.timer} seconds !
+                </div>
+            );
 
         } else if (this.state.gameStatus === 'lost') {
 
@@ -300,7 +305,9 @@ class Board extends Component {
 
         } else {
 
-            titleRibbon = (<div className="alert alert-warning">Playing. Performance: {this.state.timer}</div>);
+            titleRibbon = (<div className="alert alert-warning">
+                Playing. Performance: {this.state.timer}
+            </div>);
 
         }
 
