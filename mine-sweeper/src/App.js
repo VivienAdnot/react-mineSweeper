@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import Game from './Game/Game';
-import { Navbar, Button } from 'react-bootstrap';
+import { withStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
 import logo from './logo.svg';
 import './App.css';
 
@@ -10,61 +15,49 @@ class App extends Component {
         this.props.history.replace(`/${route}`);
     }
 
-    login() {
-        this.props.auth.login();
-    }
+    // renderNavbar() {
 
-    logout() {
-        this.props.auth.logout();
-    }
+    //     const styles = {
+    //         root: {
+    //             flexGrow: 1,
+    //         },
+    //         flex: {
+    //             flex: 1,
+    //         },
+    //         menuButton: {
+    //             marginLeft: -12,
+    //             marginRight: 20,
+    //         }
+    //     };
 
-    renderNavbar() {
+    //     return (
+    //         <div>
+    //             <Navbar fluid>
 
-        const { isAuthenticated } = this.props.auth;
+    //                 <Navbar.Header>
 
-        return (
-            <div>
-                <Navbar fluid>
+    //                     <Navbar.Brand>
+    //                         <a href="#">Minesweeper</a>
+    //                     </Navbar.Brand>
 
-                    <Navbar.Header>
+    //                     <Button onClick={this.goTo.bind(this, 'game')}>Game</Button>
 
-                        <Navbar.Brand>
-                            <a href="#">Minesweeper</a>
-                        </Navbar.Brand>
+    //                     <Button onClick={this.goTo.bind(this, 'page')}>PageContainer</Button>
 
-                        <Button onClick={this.goTo.bind(this, 'game')}>Game</Button>
+    //                 </Navbar.Header>
 
-                        {
-                            !isAuthenticated() && (
-                                <Button onClick={this.login.bind(this)}>Log in</Button>
-                            )
-                        }
+    //             </Navbar>
+    //         </div>
+    //     );
 
-                        {
-                            isAuthenticated() && (
-                                <Button onClick={this.goTo.bind(this, 'profile')}>Profile</Button>
-                            )
-                        }
-                        {
-                            isAuthenticated() && (
-                                <Button onClick={this.logout.bind(this)}>Log out</Button>
-                            )
-                        }
-
-                    </Navbar.Header>
-
-                </Navbar>
-            </div>
-        );
-
-    }
+    // }
 
     render() {
         return (
             <div>
-                {
+                {/* {
                     this.renderNavbar()
-                }
+                } */}
                 <div className="container">
                     {this.props.children}
                 </div>

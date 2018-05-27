@@ -11,7 +11,6 @@ import {
     getEmptyZoneNextNeighbours
 } from './logic/accessors';
 import { getCodeFromPosition, getCodeFromPositions } from './logic/utils';
-//import { initAuth0, proceedAuthentication } from './auth';
 
 class Board extends Component {
 
@@ -235,7 +234,9 @@ class Board extends Component {
                 return acc + visibleNumberSquaresPerRow.length;
             }, 0);
 
-            return numberSquaresSum === visibleNumberSquares;
+            //return numberSquaresSum === visibleNumberSquares;
+
+            return true;
         };
 
         if (isBombVisible()) {
@@ -296,6 +297,12 @@ class Board extends Component {
             titleRibbon = (
                 <div className="alert alert-success">
                     You won the game in {this.state.timer} seconds !
+
+                    {/* <SimpleDialogWrapped
+                        selectedValue={emails[1]}
+                        open={true}
+                        onClose={() => {}}
+                    /> */}
                 </div>
             );
 
