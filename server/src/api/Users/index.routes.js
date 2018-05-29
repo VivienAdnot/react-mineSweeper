@@ -1,9 +1,10 @@
+import restrictions from './index.restrictions';
 import handlers from './index.handlers';
 import responseSender from '../../services/responseSender';
 
 const routes = [{
     method: 'GET',
-    path: 'api/users',
+    path: '/api/users',
     handlers: [
         handlers.getUsers,
         responseSender.responseSender
@@ -12,6 +13,7 @@ const routes = [{
     method: 'POST',
     path: '/api/users',
     handlers: [
+        restrictions.postUsers,
         handlers.postUsers,
         responseSender.responseSender
     ]

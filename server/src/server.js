@@ -1,11 +1,13 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import rethinkdbdash from 'rethinkdbdash';
+import cors from 'cors';
 import { run } from './bootstrap';
 import config from '../config/config';
 
 const app = express();
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 

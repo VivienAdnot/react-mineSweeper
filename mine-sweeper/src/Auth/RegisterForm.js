@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 
+import { createUser } from '../services/users';
+
 const styles = theme => ({
     container: {
         display: 'flex',
@@ -42,6 +44,15 @@ class RegisterForm extends Component {
     handleSubmit = event => {
         event.preventDefault();
         console.log('submitted', this.state);
+
+        createUser({
+            fullName: this.state.fullName,
+            email: this.state.email,
+            password: this.state.password,
+            confirmationPassword: this.state.confirmationPassword
+        })
+        .then(result => console.log(result))
+        .catch(err => console.error('ERROR CREATE USER', err));
     };
 
     render() {

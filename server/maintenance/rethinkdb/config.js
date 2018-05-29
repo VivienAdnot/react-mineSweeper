@@ -1,2 +1,2 @@
-export const DATABASE_NAME = 'Minesweeper';
-export const TABLE_NAMES = ['Users'];
+export const DATABASE_NAME = 'minesweeper';
+export const TABLE_NAMES = ['users'];
