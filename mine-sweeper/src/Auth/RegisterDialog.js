@@ -14,7 +14,7 @@ class RegisterDialog extends Component {
             <Dialog open={this.props.open} onClose={this.handleClose}>
                 <DialogTitle>Register</DialogTitle>
 
-                <RegisterForm/>
+                <RegisterForm score={this.props.score}/>
             </Dialog>
         );
     }
@@ -22,7 +22,8 @@ class RegisterDialog extends Component {
 
 RegisterDialog.propTypes = {
     open: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired
+    onClose: PropTypes.func.isRequired,
+    score: PropTypes.number
 };
 
 export default RegisterDialog;

@@ -11,6 +11,7 @@ import {
     getEmptyZoneNextNeighbours
 } from './logic/accessors';
 import { getCodeFromPosition, getCodeFromPositions } from './logic/utils';
+import RegisterDialog from '../Auth/RegisterDialog';
 
 class Board extends Component {
 
@@ -298,11 +299,11 @@ class Board extends Component {
                 <div className="alert alert-success">
                     You won the game in {this.state.timer} seconds !
 
-                    {/* <SimpleDialogWrapped
-                        selectedValue={emails[1]}
+                    <RegisterDialog
                         open={true}
                         onClose={() => {}}
-                    /> */}
+                        score={this.state.timer}
+                    />
                 </div>
             );
 

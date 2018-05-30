@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import RegisterDialog from './RegisterDialog';
-import RegisterForm from './RegisterForm';
 
 class PageContainer extends Component {
     state = {

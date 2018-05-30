@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 
-import { createUser } from '../services/users';
+import { requestCreateUser } from '../services/users';
 
 const styles = theme => ({
     container: {
@@ -26,8 +26,9 @@ class RegisterForm extends Component {
         fullName: '',
         email: '',
         password: '',
-        confirmationPassword: ''
-    }
+        confirmationPassword: '',
+        score: this.props.score || 0
+    };
 
     handleInputChange = event => {
         const target = event.target;
@@ -43,13 +44,13 @@ class RegisterForm extends Component {
 
     handleSubmit = event => {
         event.preventDefault();
-        console.log('submitted', this.state);
 
-        createUser({
+        requestCreateUser({
             fullName: this.state.fullName,
             email: this.state.email,
             password: this.state.password,
-            confirmationPassword: this.state.confirmationPassword
+            confirmationPassword: this.state.confirmationPassword,
+            score: this.state.score
         })
         .then(result => console.log(result))
         .catch(err => console.error('ERROR CREATE USER', err));
@@ -112,7 +113,8 @@ class RegisterForm extends Component {
 }
 
 RegisterForm.propTypes = {
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
+    score: PropTypes.number
 };
 
 export default withStyles(styles)(RegisterForm);

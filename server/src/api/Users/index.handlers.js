@@ -1,14 +1,9 @@
-import sha1 from 'sha1';
-import { DATABASE_NAME, USERS_TABLE_NAME } from './index.const';
-
-const hashPassword = plainPassword => sha1(plainPassword);
+import { insertUser, getAllUsers } from './index/user.model';
+import { insertScore } from '../Scores/index/score.model';
 
 exports.getUsers = (req, res, next) =>
 
-    global.rethinkdb
-        .db(DATABASE_NAME)
-        .table(USERS_TABLE_NAME)
-        .run()
+    getAllUsers()
         .then((result) => {
 
             res.data = result;
@@ -19,23 +14,35 @@ exports.getUsers = (req, res, next) =>
 
 exports.postUsers = (req, res, next) => {
 
-    const { fullName, email, password } = req.body;
-
-    const newUser = {
+    const {
         fullName,
         email,
-        password: hashPassword(password)
-    };
+        password,
+        score
+    } = req.body;
 
-    global.rethinkdb
-        .db(DATABASE_NAME)
-        .table(USERS_TABLE_NAME)
-        .insert(newUser)
-        .run()
-        .then((result) => {
+    insertUser({
+        fullName,
+        email,
+        password
+    })
+        .then(({ newVal: userCreated }) => {
 
-            res.data = result;
-            next();
+            insertScore({
+                _user: userCreated.id,
+                score,
+                createdAt: new Date()
+            })
+                .then(({ newVal: scoreCreated }) => {
+
+                    res.data = {
+                        user: userCreated,
+                        score: scoreCreated
+                    };
+
+                    next();
+
+                });
 
         })
         .catch(next);
