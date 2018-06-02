@@ -1,4 +1,7 @@
-const formatRdbResult = (result) => {
+import jwt from 'jsonwebtoken';
+import config from 'config';
+
+export const formatRdbResult = (result) => {
 
     if (result && result.changes && result.changes.length > 0) {
 
@@ -22,4 +25,9 @@ const formatRdbResult = (result) => {
 
 };
 
-export default formatRdbResult;
+export const generateJwtToken = (user) => {
+
+    const token = jwt.sign(user, config.jwtSecret);
+    return `JWT ${token}`;
+
+};

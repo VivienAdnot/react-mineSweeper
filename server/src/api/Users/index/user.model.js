@@ -1,6 +1,6 @@
 import sha1 from 'sha1';
+import { formatRdbResult } from 'services/utils';
 import { DATABASE_NAME, USERS_TABLE_NAME } from './user.const';
-import formatRdbResult from '../../../services/utils';
 
 const hashPassword = plainPassword => sha1(plainPassword);
 

@@ -5,24 +5,29 @@ import PropTypes from 'prop-types';
 import RegisterForm from './RegisterForm';
 
 class RegisterDialog extends Component {
-    handleClose = () => {
-        this.props.onClose();
+
+    state = {
+        open: this.props.open
+    };
+
+    closeDialog = () => {
+        this.setState({ open: false})
     };
 
     render() {
         return (
-            <Dialog open={this.props.open} onClose={this.handleClose}>
+            <Dialog open={this.state.open} onClose={this.props.onClose}>
                 <DialogTitle>Register</DialogTitle>
 
-                <RegisterForm score={this.props.score}/>
+                <RegisterForm score={this.props.score} onUserCreated={this.closeDialog}/>
             </Dialog>
         );
     }
 }
 
 RegisterDialog.propTypes = {
-    open: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired,
+    open: PropTypes.bool,
+    onClose: PropTypes.func,
     score: PropTypes.number
 };
 

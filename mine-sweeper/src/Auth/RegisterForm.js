@@ -5,6 +5,7 @@ import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 
 import { requestCreateUser } from '../services/users';
+import { saveJwtToken, saveUser } from '../services/localStorage';
 
 const styles = theme => ({
     container: {
@@ -52,7 +53,14 @@ class RegisterForm extends Component {
             confirmationPassword: this.state.confirmationPassword,
             score: this.state.score
         })
-        .then(result => console.log(result))
+        .then(({ data }) => {
+
+            console.log(data);
+            this.props.onUserCreated();
+            saveJwtToken(data.token);
+            saveUser(data.user);
+
+        })
         .catch(err => console.error('ERROR CREATE USER', err));
     };
 
@@ -114,7 +122,8 @@ class RegisterForm extends Component {
 
 RegisterForm.propTypes = {
     classes: PropTypes.object.isRequired,
-    score: PropTypes.number
+    score: PropTypes.number,
+    onUserCreated: PropTypes.func
 };
 
 export default withStyles(styles)(RegisterForm);

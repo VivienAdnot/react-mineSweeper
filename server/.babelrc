@@ -1,7 +1,17 @@
 {
     "presets": [
-        "es2015",
+        "env",
         "stage-2"
+    ],
+    "plugins": [
+        [
+            "module-resolver", {
+                "root": ["./src"],
+                "alias": {
+                    "config": "./config/config"
+                }
+            }
+        ]
     ],
     "ignore": [
         "node_modules/*"

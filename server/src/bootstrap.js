@@ -1,4 +1,4 @@
-import userRoutes from './api/Users/index.routes';
+import userRoutes from 'api/Users/index.routes';
 
 const validateRouteHandlers = (route) => {
 

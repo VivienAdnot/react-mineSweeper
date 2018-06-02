@@ -2,8 +2,8 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import rethinkdbdash from 'rethinkdbdash';
 import cors from 'cors';
+import config from 'config';
 import { run } from './bootstrap';
-import config from '../config/config';
 
 const app = express();
 

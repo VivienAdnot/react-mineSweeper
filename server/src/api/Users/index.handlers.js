@@ -1,5 +1,6 @@
+import { insertScore } from 'api/Scores/index/score.model';
+import { generateJwtToken } from 'services/utils';
 import { insertUser, getAllUsers } from './index/user.model';
-import { insertScore } from '../Scores/index/score.model';
 
 exports.getUsers = (req, res, next) =>
 
@@ -36,6 +37,7 @@ exports.postUsers = (req, res, next) => {
                 .then(({ newVal: scoreCreated }) => {
 
                     res.data = {
+                        token: generateJwtToken({ id: userCreated.id }),
                         user: userCreated,
                         score: scoreCreated
                     };

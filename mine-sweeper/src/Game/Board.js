@@ -301,7 +301,6 @@ class Board extends Component {
 
                     <RegisterDialog
                         open={true}
-                        onClose={() => {}}
                         score={this.state.timer}
                     />
                 </div>
