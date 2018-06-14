@@ -1,6 +1,6 @@
 import Boom from 'boom';
 
-exports.postUsers = (req, res, next) => {
+exports.postUser = (req, res, next) => {
 
     const { password, confirmationPassword } = req.body;
 

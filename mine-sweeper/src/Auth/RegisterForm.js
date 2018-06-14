@@ -50,15 +50,14 @@ class RegisterForm extends Component {
             fullName: this.state.fullName,
             email: this.state.email,
             password: this.state.password,
-            confirmationPassword: this.state.confirmationPassword,
-            score: this.state.score
+            confirmationPassword: this.state.confirmationPassword
         })
-        .then(({ data }) => {
+        .then(({ data: userCreatedWithToken }) => {
 
-            console.log(data);
-            this.props.onUserCreated();
-            saveJwtToken(data.token);
-            saveUser(data.user);
+            console.log(userCreatedWithToken);
+            this.props.onUserCreated(userCreatedWithToken);
+            //saveJwtToken(data.token);
+            //saveUser(data.user);
 
         })
         .catch(err => console.error('ERROR CREATE USER', err));

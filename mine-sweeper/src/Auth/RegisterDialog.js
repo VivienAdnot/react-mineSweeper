@@ -14,12 +14,17 @@ class RegisterDialog extends Component {
         this.setState({ open: false})
     };
 
+    onUserCreated = (userCreatedWithToken) => {
+        this.props.onUserCreated(userCreatedWithToken);
+        this.setState({ open: false});
+    }
+
     render() {
         return (
             <Dialog open={this.state.open} onClose={this.props.onClose}>
                 <DialogTitle>Register</DialogTitle>
 
-                <RegisterForm score={this.props.score} onUserCreated={this.closeDialog}/>
+                <RegisterForm onUserCreated={this.onUserCreated}/>
             </Dialog>
         );
     }
@@ -28,7 +33,7 @@ class RegisterDialog extends Component {
 RegisterDialog.propTypes = {
     open: PropTypes.bool,
     onClose: PropTypes.func,
-    score: PropTypes.number
+    onUserCreated: PropTypes.func.required
 };
 
 export default RegisterDialog;

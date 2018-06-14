@@ -13,8 +13,8 @@ const routes = [{
     method: 'POST',
     path: '/api/users',
     handlers: [
-        restrictions.postUsers,
-        handlers.postUsers,
+        restrictions.postUser,
+        handlers.postUser,
         responseSender.responseSender
     ]
 }];

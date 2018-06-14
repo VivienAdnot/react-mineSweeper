@@ -24,7 +24,8 @@ class Board extends Component {
         this.state = {
             boardMap: buildMap(this.bombPositions, props.rowsLength, props.columnsLength),
             gameStatus: 'playing', //won, lost
-            timer: 0
+            timer: 0,
+            isAuthenticated: false
         };
 
         this.positionLost = null;
@@ -290,19 +291,40 @@ class Board extends Component {
 
     };
 
+    onUserCreated = (userCreatedWithToken) => {
+        this.setState({
+            isAuthenticated: true
+        });
+    }
+
     render() {
 
         let titleRibbon;
         if (this.state.gameStatus === 'won') {
 
+            let action;
+            if (!this.state.isAuthenticated) {
+
+                action = (
+                    <RegisterDialog
+                        open={true}
+                        onUserCreated={this.onUserCreated}
+                    />
+                );
+
+            } else {
+
+                action = (
+                    <h1>Authenticated</h1>
+                );
+
+            }
+
             titleRibbon = (
                 <div className="alert alert-success">
                     You won the game in {this.state.timer} seconds !
 
-                    <RegisterDialog
-                        open={true}
-                        score={this.state.timer}
-                    />
+                    {action}
                 </div>
             );
 

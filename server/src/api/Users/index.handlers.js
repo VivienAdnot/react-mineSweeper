@@ -13,13 +13,12 @@ exports.getUsers = (req, res, next) =>
         })
         .catch(next);
 
-exports.postUsers = (req, res, next) => {
+exports.postUser = (req, res, next) => {
 
     const {
         fullName,
         email,
-        password,
-        score
+        password
     } = req.body;
 
     insertUser({
@@ -29,22 +28,12 @@ exports.postUsers = (req, res, next) => {
     })
         .then(({ newVal: userCreated }) => {
 
-            insertScore({
-                _user: userCreated.id,
-                score,
-                createdAt: new Date()
-            })
-                .then(({ newVal: scoreCreated }) => {
+            res.data = {
+                token: generateJwtToken({ id: userCreated.id }),
+                user: userCreated
+            };
 
-                    res.data = {
-                        token: generateJwtToken({ id: userCreated.id }),
-                        user: userCreated,
-                        score: scoreCreated
-                    };
-
-                    next();
-
-                });
+            next();
 
         })
         .catch(next);
