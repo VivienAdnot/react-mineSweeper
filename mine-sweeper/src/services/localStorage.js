@@ -1,4 +1,4 @@
-export const saveJwtToken = (jwtToken) => {
+export const storeJwtToken = (jwtToken) => {
 
     window.localStorage.setItem('jwtToken', jwtToken);
 
@@ -10,7 +10,7 @@ export const getJwtToken = () => {
 
 };
 
-export const saveUser = (user) => {
+export const storeUser = (user) => {
 
     window.localStorage.setItem('user', JSON.stringify(user));
 

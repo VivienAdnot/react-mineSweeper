@@ -11,7 +11,6 @@ import {
     getEmptyZoneNextNeighbours
 } from './logic/accessors';
 import { getCodeFromPosition, getCodeFromPositions } from './logic/utils';
-import RegisterDialog from '../Auth/RegisterDialog';
 
 class Board extends Component {
 
@@ -22,24 +21,10 @@ class Board extends Component {
         this.bombPositions = buildBombPositions(props.rowsLength, props.columnsLength, props.bombAmount);
 
         this.state = {
-            boardMap: buildMap(this.bombPositions, props.rowsLength, props.columnsLength),
-            gameStatus: 'playing', //won, lost
-            timer: 0,
-            isAuthenticated: false
+            boardMap: buildMap(this.bombPositions, props.rowsLength, props.columnsLength)
         };
 
         this.positionLost = null;
-
-        this.timerRef = setInterval(() => {
-
-            this.setState((prevState) => {
-
-                const timer = this.state.timer += 1;
-                return { timer };
-
-            })
-
-        }, 1000);
 
     }
 
@@ -126,15 +111,17 @@ class Board extends Component {
             }
 
         }, () => {
-            this.state.gameStatus = this.computeGameStatus();
+            const gameStatus = this.computeGameStatus();
 
-            if (this.state.gameStatus === 'lost') {
+            if (gameStatus === 'lost') {
 
                 this.onGameLost(position);
+                this.props.onLoss();
 
-            } else if (this.state.gameStatus === 'won') {
+            } else if (gameStatus === 'won') {
 
                 this.onGameWon(position);
+                this.props.onWin(this.state.timer);
 
             }
 
@@ -195,15 +182,17 @@ class Board extends Component {
             }
 
         }, () => {
-            this.state.gameStatus = this.computeGameStatus();
+            const gameStatus = this.computeGameStatus();
 
-            if (this.state.gameStatus === 'lost') {
+            if (gameStatus === 'lost') {
 
                 this.onGameLost(position);
+                this.props.onLoss();
 
-            } else if (this.state.gameStatus === 'won') {
+            } else if (gameStatus === 'won') {
 
                 this.onGameWon(position);
+                this.props.onWin(this.state.timer);
 
             }
 
@@ -249,16 +238,14 @@ class Board extends Component {
         return 'playing';
     };
 
-    onGameWon = (position) => {
+    onGameWon = () => {
 
-        clearInterval(this.timerRef);
         this.markAllBombs();
 
     }
 
     onGameLost = (position) => {
 
-        clearInterval(this.timerRef);
         this.showAllBombs(position);
         this.positionLost = position;
 
@@ -285,64 +272,16 @@ class Board extends Component {
             onLeftClick={this.onSquareLeftClick}
             onRightClick={this.onSquareRightClick}
             onDblClick={this.onSquareDoubleClick}
-            clickable={this.state.gameStatus === 'playing'}
+            clickable={this.props.gameStatus === 'playing'}
             ></Square>
         );
 
     };
 
-    onUserCreated = (userCreatedWithToken) => {
-        this.setState({
-            isAuthenticated: true
-        });
-    }
-
     render() {
-
-        let titleRibbon;
-        if (this.state.gameStatus === 'won') {
-
-            let action;
-            if (!this.state.isAuthenticated) {
-
-                action = (
-                    <RegisterDialog
-                        open={true}
-                        onUserCreated={this.onUserCreated}
-                    />
-                );
-
-            } else {
-
-                action = (
-                    <h1>Authenticated</h1>
-                );
-
-            }
-
-            titleRibbon = (
-                <div className="alert alert-success">
-                    You won the game in {this.state.timer} seconds !
-
-                    {action}
-                </div>
-            );
-
-        } else if (this.state.gameStatus === 'lost') {
-
-            titleRibbon = (<div className="alert alert-danger">You lost the game</div>);
-
-        } else {
-
-            titleRibbon = (<div className="alert alert-warning">
-                Playing. Performance: {this.state.timer}
-            </div>);
-
-        }
 
         return (
             <div>
-                {titleRibbon}
                 {
                     Array.from({length: this.props.rowsLength}, (value, index) => index).map(x => {
                         return (
@@ -356,14 +295,6 @@ class Board extends Component {
                         );
                     })
                 }
-
-                {['won', 'lost'].includes(this.state.gameStatus) && (
-                    <div className="result">
-                        <button className="play-again" onClick={this.props.onPlayAgain}>
-                            Play Again
-                        </button>
-                    </div>
-                )}
             </div>
         );
 

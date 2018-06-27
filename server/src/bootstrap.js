@@ -1,4 +1,5 @@
 import userRoutes from 'api/Users/index.routes';
+import scoreRoutes from 'api/Scores/index.routes';
 
 const validateRouteHandlers = (route) => {
 
@@ -36,7 +37,8 @@ const mountRoutes = (app, routesTree) =>
 const run = (app) => {
 
     mountRoutes(app, [
-        userRoutes
+        userRoutes,
+        scoreRoutes
     ]);
 
 };
