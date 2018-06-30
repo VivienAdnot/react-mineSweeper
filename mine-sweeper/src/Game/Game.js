@@ -6,6 +6,10 @@ import RegisterDialog from '../Auth/RegisterDialog';
 import { storeJwtToken, storeUser, getJwtToken, getUser } from '../services/localStorage';
 import { saveScore } from '../services/scores';
 
+export const GAME_PLAYING = 0;
+export const GAME_WIN = 1;
+export const GAME_LOSS = 2;
+
 class Game extends Component {
 
     constructor(props) {
@@ -14,7 +18,7 @@ class Game extends Component {
         this.state = {
             gameId: 1,
             isAuthenticated: false,
-            gameStatus: 'playing', //won, lost
+            gameStatus: GAME_PLAYING,
             timer: 0
         };
 
@@ -39,7 +43,7 @@ class Game extends Component {
         this.state.timer = 0;
         this.startInterval();
         this.setState((prevState) => ({
-            gameStatus: 'playing',
+            gameStatus: GAME_PLAYING,
             gameId: prevState.gameId + 1
         }));
     };
@@ -48,14 +52,14 @@ class Game extends Component {
         clearInterval(this.timerRef);
         this.score = score;
         this.setState(() => ({
-            gameStatus: 'won'
+            gameStatus: GAME_WIN
         }));
     };
 
     onLoss = () => {
         clearInterval(this.timerRef);
         this.setState(() => ({
-            gameStatus: 'loss'
+            gameStatus: GAME_LOSS
         }));
     };
 
@@ -77,7 +81,7 @@ class Game extends Component {
     render() {
 
         let titleRibbon;
-        if (this.state.gameStatus === 'won') {
+        if (this.state.gameStatus === GAME_WIN) {
 
             titleRibbon = (
                 <div className="alert alert-success">
@@ -85,7 +89,7 @@ class Game extends Component {
                 </div>
             );
 
-        } else if (this.state.gameStatus === 'lost') {
+        } else if (this.state.gameStatus === GAME_LOSS) {
 
             titleRibbon = (<div className="alert alert-danger">You lost the game</div>);
 
@@ -98,7 +102,7 @@ class Game extends Component {
         }
 
         return (
-            <div className="game">
+            <div className="game container">
 
                 {titleRibbon}
 
@@ -114,7 +118,7 @@ class Game extends Component {
                     ></Board>
                 </div>
 
-                {['won', 'lost'].includes(this.state.gameStatus) && (
+                {[GAME_WIN, GAME_LOSS].includes(this.state.gameStatus) && (
                     <div className="result">
                         <button className="play-again" onClick={this.resetGame}>
                             Play Again

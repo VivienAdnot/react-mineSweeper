@@ -11,6 +11,7 @@ import {
     getEmptyZoneNextNeighbours
 } from './logic/accessors';
 import { getCodeFromPosition, getCodeFromPositions } from './logic/utils';
+import { GAME_PLAYING, GAME_WIN, GAME_LOSS} from './Game';
 
 class Board extends Component {
 
@@ -113,12 +114,12 @@ class Board extends Component {
         }, () => {
             const gameStatus = this.computeGameStatus();
 
-            if (gameStatus === 'lost') {
+            if (gameStatus === GAME_LOSS) {
 
                 this.onGameLost(position);
                 this.props.onLoss();
 
-            } else if (gameStatus === 'won') {
+            } else if (gameStatus === GAME_WIN) {
 
                 this.onGameWon(position);
                 this.props.onWin(this.state.timer);
@@ -184,12 +185,12 @@ class Board extends Component {
         }, () => {
             const gameStatus = this.computeGameStatus();
 
-            if (gameStatus === 'lost') {
+            if (gameStatus === GAME_LOSS) {
 
                 this.onGameLost(position);
                 this.props.onLoss();
 
-            } else if (gameStatus === 'won') {
+            } else if (gameStatus === GAME_WIN) {
 
                 this.onGameWon(position);
                 this.props.onWin(this.state.timer);
@@ -231,11 +232,11 @@ class Board extends Component {
         };
 
         if (isBombVisible()) {
-            return 'lost';
+            return GAME_LOSS;
         } else if (areAllNumberSquaresDisplayed()) {
-            return 'won';
+            return GAME_WIN;
         }
-        return 'playing';
+        return GAME_PLAYING;
     };
 
     onGameWon = () => {
@@ -272,7 +273,7 @@ class Board extends Component {
             onLeftClick={this.onSquareLeftClick}
             onRightClick={this.onSquareRightClick}
             onDblClick={this.onSquareDoubleClick}
-            clickable={this.props.gameStatus === 'playing'}
+            clickable={this.props.gameStatus === GAME_PLAYING}
             ></Square>
         );
 

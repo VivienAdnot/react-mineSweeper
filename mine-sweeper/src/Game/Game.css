@@ -1,6 +1,6 @@
 .game {
-    display: flex;
-    flex-direction: row;
+    /*display: flex;
+    flex-direction: row;*/
 }
 
 .board-row:after {
