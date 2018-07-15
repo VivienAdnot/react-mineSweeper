@@ -54,6 +54,11 @@ class Game extends Component {
         this.setState(() => ({
             gameStatus: GAME_WIN
         }));
+
+        if (this.state.isAuthenticated) {
+            const user = getUser();
+            saveScore(user.id, this.state.timer);
+        }
     };
 
     onLoss = () => {
@@ -63,20 +68,18 @@ class Game extends Component {
         }));
     };
 
-    // onUserCreated = (userCreatedWithToken) => {
+    onUserCreated = (userCreatedWithToken) => {
 
-    //     // todo save token and userCreated.id
-    //     // todo save score
+        storeJwtToken(userCreatedWithToken.token);
+        storeUser(userCreatedWithToken.user);
 
-    //     storeJwtToken(userCreatedWithToken.token);
-    //     storeUser(userCreatedWithToken.user);
+        saveScore(userCreatedWithToken.user.id, this.state.timer);
 
-    //     saveScore(userCreatedWithToken.user.id, this.state.timer);
+        this.setState(() => ({
+            isAuthenticated: true
+        }));
 
-    //     this.setState({
-    //         isAuthenticated: true
-    //     });
-    // }
+    }
 
     render() {
 
@@ -84,9 +87,22 @@ class Game extends Component {
         if (this.state.gameStatus === GAME_WIN) {
 
             titleRibbon = (
+
                 <div className="alert alert-success">
+
+                    {!this.state.isAuthenticated &&
+
+                        <RegisterDialog
+                            key={this.state.gameId}
+                            open={true}
+                            onUserCreated={this.onUserCreated}
+                        />
+
+                    }
+
                     You won the game in {this.state.timer} seconds !
                 </div>
+
             );
 
         } else if (this.state.gameStatus === GAME_LOSS) {
