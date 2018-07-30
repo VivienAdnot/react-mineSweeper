@@ -8,7 +8,7 @@ import Button from '@material-ui/core/Button';
 
 const styles = {
     root: {
-        flexGrow: 1,
+        flexGrow: 1
     },
     //flex: 1 will use all the space available. So the rest will be pushed to the right.
     flex: {
@@ -16,18 +16,35 @@ const styles = {
     }
 };
 
+const title = 'Minesweeper';
+
+function Greeting(props) {
+    const { isAuthenticated, user } = props;
+
+    if (isAuthenticated) {
+
+        return <Typography color="inherit" variant="subheading">Welcome {user.fullName}</Typography>;
+
+    } else {
+
+        return <Button color="inherit">Register</Button>;
+
+    }
+}
+
 function ButtonAppBar(props) {
+
     const { classes } = props;
-    const title = 'Minesweeper';
+
     return (
         <div className={classes.root}>
-            <AppBar position="static">
+            <AppBar position="static" color="default">
                 <Toolbar>
                     <Typography variant="title" color="inherit" className={classes.flex}>
                         {title}
                     </Typography>
 
-                    <Button color="inherit">Register</Button>
+                    <Greeting {...props} />
                 </Toolbar>
             </AppBar>
         </div>

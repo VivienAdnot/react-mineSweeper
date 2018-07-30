@@ -3,8 +3,7 @@ import Board from './Board';
 import './Game.css';
 
 import RegisterDialog from '../Auth/RegisterDialog';
-import { storeJwtToken, storeUser, getJwtToken, getUser } from '../services/localStorage';
-import { saveScore } from '../services/scores';
+
 
 export const GAME_PLAYING = 0;
 export const GAME_WIN = 1;
@@ -17,7 +16,6 @@ class Game extends Component {
 
         this.state = {
             gameId: 1,
-            isAuthenticated: false,
             gameStatus: GAME_PLAYING,
             timer: 0
         };
@@ -55,10 +53,10 @@ class Game extends Component {
             gameStatus: GAME_WIN
         }));
 
-        if (this.state.isAuthenticated) {
-            const user = getUser();
-            saveScore(user.id, this.state.timer);
-        }
+        // if (this.state.isAuthenticated) {
+        //     const user = getUser();
+        //     saveScore(user.id, this.state.timer);
+        // }
     };
 
     onLoss = () => {
@@ -67,19 +65,6 @@ class Game extends Component {
             gameStatus: GAME_LOSS
         }));
     };
-
-    onUserCreated = (userCreatedWithToken) => {
-
-        storeJwtToken(userCreatedWithToken.token);
-        storeUser(userCreatedWithToken.user);
-
-        saveScore(userCreatedWithToken.user.id, this.state.timer);
-
-        this.setState(() => ({
-            isAuthenticated: true
-        }));
-
-    }
 
     render() {
 
@@ -90,12 +75,15 @@ class Game extends Component {
 
                 <div className="alert alert-success">
 
-                    {!this.state.isAuthenticated &&
+                    {!this.props.isAuthenticated &&
 
                         <RegisterDialog
                             key={this.state.gameId}
                             open={true}
-                            onUserCreated={this.onUserCreated}
+                            onUserCreated={(userCreated) => this.props.onUserCreated({
+                                userCreated,
+                                time: this.state.timer
+                            })}
                         />
 
                     }
