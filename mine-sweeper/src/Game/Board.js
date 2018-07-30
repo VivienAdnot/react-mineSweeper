@@ -226,9 +226,7 @@ class Board extends Component {
                 return acc + visibleNumberSquaresPerRow.length;
             }, 0);
 
-            //return numberSquaresSum === visibleNumberSquares;
-
-            return true;
+            return numberSquaresSum === visibleNumberSquares;
         };
 
         if (isBombVisible()) {

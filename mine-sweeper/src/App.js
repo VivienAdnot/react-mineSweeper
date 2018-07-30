@@ -12,9 +12,13 @@ class App extends Component {
 
         super(props);
 
+        const token = getJwtToken();
+        const user = getUser();
+
         this.state = {
-            isAuthenticated: false,
-            user: null,
+            isAuthenticated: !!user,
+            user: user || null,
+            token: token || null,
             showRegisterPopup: false
         };
 
@@ -24,9 +28,7 @@ class App extends Component {
 
     onUserCreated = (userCreated) => {
 
-        console.log('App.onUserCreated called with', userCreated);
         const { user, token } = userCreated;
-        console.log(user, token, this.timeTemp);
 
         this.setState(() => ({
             isAuthenticated: true,
@@ -45,7 +47,6 @@ class App extends Component {
 
     onWin = (time) => {
 
-        console.log('App.onWin called with time', time);
         if (this.state.isAuthenticated) {
 
             saveScore(this.state.user.id, time);
