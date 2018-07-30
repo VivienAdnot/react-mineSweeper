@@ -122,7 +122,7 @@ class Board extends Component {
             } else if (gameStatus === GAME_WIN) {
 
                 this.onGameWon(position);
-                this.props.onWin(this.state.timer);
+                this.props.onWin();
 
             }
 
@@ -193,7 +193,7 @@ class Board extends Component {
             } else if (gameStatus === GAME_WIN) {
 
                 this.onGameWon(position);
-                this.props.onWin(this.state.timer);
+                this.props.onWin();
 
             }
 

@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import Board from './Board';
 import './Game.css';
 
-import RegisterDialog from '../Auth/RegisterDialog';
-
-
 export const GAME_PLAYING = 0;
 export const GAME_WIN = 1;
 export const GAME_LOSS = 2;
@@ -40,23 +37,21 @@ class Game extends Component {
     resetGame = () => {
         this.state.timer = 0;
         this.startInterval();
+
         this.setState((prevState) => ({
             gameStatus: GAME_PLAYING,
             gameId: prevState.gameId + 1
         }));
     };
 
-    onWin = (score) => {
+    onWin = () => {
         clearInterval(this.timerRef);
-        this.score = score;
+
         this.setState(() => ({
             gameStatus: GAME_WIN
         }));
 
-        // if (this.state.isAuthenticated) {
-        //     const user = getUser();
-        //     saveScore(user.id, this.state.timer);
-        // }
+        this.props.onWin(this.state.timer);
     };
 
     onLoss = () => {
@@ -74,20 +69,6 @@ class Game extends Component {
             titleRibbon = (
 
                 <div className="alert alert-success">
-
-                    {!this.props.isAuthenticated &&
-
-                        <RegisterDialog
-                            key={this.state.gameId}
-                            open={true}
-                            onUserCreated={(userCreated) => this.props.onUserCreated({
-                                userCreated,
-                                time: this.state.timer
-                            })}
-                        />
-
-                    }
-
                     You won the game in {this.state.timer} seconds !
                 </div>
 
