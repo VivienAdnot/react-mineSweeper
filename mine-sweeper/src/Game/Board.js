@@ -229,12 +229,14 @@ class Board extends Component {
             return numberSquaresSum === visibleNumberSquares;
         };
 
-        if (isBombVisible()) {
-            return GAME_LOSS;
-        } else if (areAllNumberSquaresDisplayed()) {
-            return GAME_WIN;
-        }
-        return GAME_PLAYING;
+        // if (isBombVisible()) {
+        //     return GAME_LOSS;
+        // } else if (areAllNumberSquaresDisplayed()) {
+        //     return GAME_WIN;
+        // }
+        // return GAME_PLAYING;
+
+        return GAME_WIN;
     };
 
     onGameWon = () => {

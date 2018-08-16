@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Board from './Board';
 import './Game.css';
+import { AppContext } from '../AppProvider';
 
 export const GAME_PLAYING = 0;
 export const GAME_WIN = 1;
@@ -51,7 +52,7 @@ class Game extends Component {
             gameStatus: GAME_WIN
         }));
 
-        this.props.onWin(this.state.timer);
+        //this.props.onWin(this.state.timer);
     };
 
     onLoss = () => {
@@ -92,15 +93,27 @@ class Game extends Component {
                 {titleRibbon}
 
                 <div className="game-board">
-                    <Board
-                        key={this.state.gameId}
-                        rowsLength={16}
-                        columnsLength={30}
-                        bombAmount={99}
-                        gameStatus={this.state.gameStatus}
-                        onWin={this.onWin}
-                        onLoss={this.onLoss}
-                    ></Board>
+                    <AppContext.Consumer>
+                        {(context) =>
+
+                            <Board
+                                key={this.state.gameId}
+                                rowsLength={16}
+                                columnsLength={30}
+                                bombAmount={99}
+                                gameStatus={this.state.gameStatus}
+                                onWin={() => {
+
+                                    context.onWin(this.state.timer);
+                                    this.onWin();
+
+                                }}
+                                onLoss={this.onLoss}
+                            ></Board>
+
+                        }
+                    </AppContext.Consumer>
+
                 </div>
 
                 {[GAME_WIN, GAME_LOSS].includes(this.state.gameStatus) && (

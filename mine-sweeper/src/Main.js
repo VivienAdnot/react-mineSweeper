@@ -5,13 +5,7 @@ import Game from './Game/Game';
 const Main = (props) => (
     <main>
         <Switch>
-            <Route exact path='/' render={() => {
-                return <Game
-                    {...props}
-                    onWin={props.onWin}
-                />
-            }
-          }/>
+            <Route exact path='/' component={Game}/>
         </Switch>
     </main>
 );
