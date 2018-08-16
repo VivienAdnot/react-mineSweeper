@@ -5,6 +5,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import { AppContext } from './AppProvider';
 
 const styles = {
     root: {
@@ -18,8 +19,8 @@ const styles = {
 
 const title = 'Minesweeper';
 
-function Greeting(props) {
-    const { isAuthenticated, user } = props;
+function Greeting(context) {
+    const { isAuthenticated, user } = context;
 
     if (isAuthenticated) {
 
@@ -38,15 +39,21 @@ function ButtonAppBar(props) {
 
     return (
         <div className={classes.root}>
-            <AppBar position="static" color="default">
-                <Toolbar>
-                    <Typography variant="title" color="inherit" className={classes.flex}>
-                        {title}
-                    </Typography>
+        <AppContext.Consumer>
+            {(context) =>
 
-                    <Greeting {...props} />
-                </Toolbar>
-            </AppBar>
+                <AppBar position="static" color="default">
+                    <Toolbar>
+                        <Typography variant="title" color="inherit" className={classes.flex}>
+                            {title}
+                        </Typography>
+
+                        <Greeting {...context} />
+                    </Toolbar>
+                </AppBar>
+
+            }
+            </AppContext.Consumer>
         </div>
     );
 
