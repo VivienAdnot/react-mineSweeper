@@ -35,10 +35,13 @@ export class AppProvider extends Component {
                 isAuthenticated: true,
                 user,
                 showRegisterPopup: false
-            }));
+            }), () => {
 
-            storeJwtToken(token);
-            storeUser(user);
+                storeJwtToken(token);
+                storeUser(user);
+                this.saveScoreInternal(this.timeTemp);
+
+            });
 
         },
 
@@ -46,7 +49,7 @@ export class AppProvider extends Component {
 
             if (this.state.isAuthenticated) {
 
-                this.saveScoreInternal(this.state.user.id, score);
+                this.saveScoreInternal(score);
 
             } else {
 
