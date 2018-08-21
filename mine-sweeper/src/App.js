@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import './App.css';
+import { Switch, Route } from 'react-router-dom';
 import AppBar from './AppBar';
-import Main from './Main';
+import './App.css';
 import DisplayDialogIfNeeded from './Auth/DisplayDialogIfNeeded';
+import Main from './Main';
 
 class App extends Component {
 
@@ -12,7 +13,12 @@ class App extends Component {
             <div>
                 <AppBar />
                 <DisplayDialogIfNeeded></DisplayDialogIfNeeded>
-                <Main />
+
+                <main>
+                    <Switch>
+                        <Route exact path='/' component={Main}/>
+                    </Switch>
+                </main>
             </div>
         );
 

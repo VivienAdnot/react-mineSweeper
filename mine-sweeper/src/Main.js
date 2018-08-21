@@ -1,13 +1,19 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import Grid from '@material-ui/core/Grid';
 import Game from './Game/Game';
+import BestScores from './BestScores';
 
 const Main = (props) => (
-    <main>
-        <Switch>
-            <Route exact path='/' component={Game}/>
-        </Switch>
-    </main>
+    <React.Fragment>
+        <Grid container spacing={40}>
+            <Grid item md={9}>
+                <Game/>
+            </Grid>
+            <Grid item md={3}>
+            <BestScores/>
+            </Grid>
+        </Grid>
+    </React.Fragment>
 );
 
 export default Main;
