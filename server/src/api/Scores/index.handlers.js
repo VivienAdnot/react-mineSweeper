@@ -1,4 +1,4 @@
-import { insertScore } from 'api/Scores/index/score.model';
+import { insertScore, getAllBestScores, enrichScores } from './index/score.model';
 
 exports.postScore = (req, res, next) => {
 
@@ -12,15 +12,30 @@ exports.postScore = (req, res, next) => {
         score,
         createdAt: new Date()
     })
-        .then(({ newVal: scoreCreated }) => {
+    .then(({ newVal: scoreCreated }) => {
 
-            res.data = {
-                score: scoreCreated
-            };
+        res.data = {
+            score: scoreCreated
+        };
 
-            next();
+        next();
 
-        })
-        .catch(next);
+    })
+    .catch(next);
+
+};
+
+exports.getBestScores = (req, res, next) => {
+
+    getAllBestScores()
+    .then(bestScores => enrichScores(bestScores))
+    .then((enrichedBestScores) => {
+
+        res.data = enrichedBestScores;
+
+        next();
+
+    })
+    .catch(next);
 
 };

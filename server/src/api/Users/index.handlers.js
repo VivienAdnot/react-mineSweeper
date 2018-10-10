@@ -1,17 +1,16 @@
-import { insertScore } from 'api/Scores/index/score.model';
 import { generateJwtToken } from 'services/utils';
 import { insertUser, getAllUsers } from './index/user.model';
 
 exports.getUsers = (req, res, next) =>
 
     getAllUsers()
-        .then((result) => {
+    .then((result) => {
 
-            res.data = result;
-            next();
+        res.data = result;
+        next();
 
-        })
-        .catch(next);
+    })
+    .catch(next);
 
 exports.postUser = (req, res, next) => {
 
@@ -26,16 +25,16 @@ exports.postUser = (req, res, next) => {
         email,
         password
     })
-        .then(({ newVal: userCreated }) => {
+    .then(({ newVal: userCreated }) => {
 
-            res.data = {
-                token: generateJwtToken({ id: userCreated.id }),
-                user: userCreated
-            };
+        res.data = {
+            token: generateJwtToken({ id: userCreated.id }),
+            user: userCreated
+        };
 
-            next();
+        next();
 
-        })
-        .catch(next);
+    })
+    .catch(next);
 
 };

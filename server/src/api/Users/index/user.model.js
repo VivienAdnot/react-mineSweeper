@@ -7,9 +7,17 @@ const hashPassword = plainPassword => sha1(plainPassword);
 export const getAllUsers = () =>
 
     global.rethinkdb
-        .db(DATABASE_NAME)
-        .table(USERS_TABLE_NAME)
-        .run();
+    .db(DATABASE_NAME)
+    .table(USERS_TABLE_NAME)
+    .run();
+
+export const getUserById = _user =>
+
+    global.rethinkdb
+    .db(DATABASE_NAME)
+    .table(USERS_TABLE_NAME)
+    .get(_user)
+    .run();
 
 export const insertUser = (data) => {
 
@@ -20,11 +28,11 @@ export const insertUser = (data) => {
     };
 
     return global.rethinkdb
-        .db(DATABASE_NAME)
-        .table(USERS_TABLE_NAME)
-        .insert(newUser, { returnChanges: true })
-        .run()
-        .then(formatRdbResult);
+    .db(DATABASE_NAME)
+    .table(USERS_TABLE_NAME)
+    .insert(newUser, { returnChanges: true })
+    .run()
+    .then(formatRdbResult);
 
 };
 

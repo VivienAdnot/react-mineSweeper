@@ -10,7 +10,7 @@ const Main = (props) => (
                 <Game/>
             </Grid>
             <Grid item md={3}>
-            <BestScores/>
+                <BestScores/>
             </Grid>
         </Grid>
     </React.Fragment>

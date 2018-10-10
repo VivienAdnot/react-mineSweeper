@@ -8,6 +8,13 @@ const routes = [{
         handlers.postScore,
         responseSender.responseSender
     ]
+}, {
+    method: 'GET',
+    path: '/api/best-scores',
+    handlers: [
+        handlers.getBestScores,
+        responseSender.responseSender
+    ]
 }];
 
 module.exports = routes;
