@@ -13,13 +13,26 @@ export class AppProvider extends Component {
 
     token = getJwtToken();
     user = getUser();
-    timeTemp = null;
+
+    scoreInternal = {
+        shouldSaveScore: false,
+        time: null
+    };
 
     saveScoreInternal = (score) => {
 
         saveScore(this.state.user.id, score);
 
-    }
+    };
+
+    clearScore = () => {
+
+        this.scoreInternal = {
+            shouldSaveScore: false,
+            time: null
+        };
+
+    };
 
     state = {
         isAuthenticated: !!this.user,
@@ -39,7 +52,11 @@ export class AppProvider extends Component {
 
                 storeJwtToken(token);
                 storeUser(user);
-                this.saveScoreInternal(this.timeTemp);
+
+                if (this.scoreInternal.shouldSaveScore) {
+                    this.saveScoreInternal(this.scoreInternal.time);
+                    this.clearScore();
+                }
 
             });
 
@@ -53,13 +70,22 @@ export class AppProvider extends Component {
 
             } else {
 
-                this.timeTemp = score;
+                this.scoreInternal = {
+                    shouldSaveScore: false,
+                    time: score
+                };
                 this.setState({
                     showRegisterPopup: true
                 });
 
             }
 
+        },
+
+        requestShowRegisterPopup: () => {
+            this.setState({
+                showRegisterPopup: true
+            });
         }
     };
 
