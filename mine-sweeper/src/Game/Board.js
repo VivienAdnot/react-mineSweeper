@@ -12,6 +12,7 @@ import {
 } from './logic/accessors';
 import { getCodeFromPosition, getCodeFromPositions } from './logic/utils';
 import { GAME_PLAYING, GAME_WIN, GAME_LOSS} from './Game';
+import { doWinFast } from './debug';
 
 class Board extends Component {
 
@@ -229,14 +230,17 @@ class Board extends Component {
             return numberSquaresSum === visibleNumberSquares;
         };
 
-        // if (isBombVisible()) {
-        //     return GAME_LOSS;
-        // } else if (areAllNumberSquaresDisplayed()) {
-        //     return GAME_WIN;
-        // }
-        // return GAME_PLAYING;
+        // shortcut for debug:
+        if (doWinFast) {
+            return GAME_WIN;
+        }
 
-        return GAME_WIN;
+        if (isBombVisible()) {
+            return GAME_LOSS;
+        } else if (areAllNumberSquaresDisplayed()) {
+            return GAME_WIN;
+        }
+        return GAME_PLAYING;
     };
 
     onGameWon = () => {

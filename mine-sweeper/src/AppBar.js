@@ -6,18 +6,18 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { AppContext } from './AppProvider';
+import { config } from './config';
 
 const styles = {
-    root: {
+    appBar: {
+        width: `calc(100% - ${config.drawerWidth}px)`,
+        marginRight: config.drawerWidth,
         flexGrow: 1
     },
-    //flex: 1 will use all the space available. So the rest will be pushed to the right.
     flex: {
-        flex: 1,
+        flex: 1
     }
 };
-
-const title = 'Minesweeper';
 
 function Greeting(context) {
     const { isAuthenticated, user } = context;
@@ -42,10 +42,11 @@ function ButtonAppBar(props) {
         <AppContext.Consumer>
             {(context) =>
 
-                <AppBar position="static" color="default">
+                <AppBar position="fixed" className={classes.appBar} color="primary">
+
                     <Toolbar>
-                        <Typography variant="title" color="inherit" className={classes.flex}>
-                            {title}
+                        <Typography variant="title" className={classes.flex} color="inherit" noWrap>
+                            {config.title}
                         </Typography>
 
                         <Greeting {...context} />

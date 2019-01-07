@@ -3,22 +3,19 @@ import { Switch, Route } from 'react-router-dom';
 import AppBar from './AppBar';
 import './App.css';
 import DisplayDialogIfNeeded from './Auth/DisplayDialogIfNeeded';
-import Main from './Main';
+import Game from './Game/Game';
+import Drawer from './Drawer';
 
 class App extends Component {
 
     render() {
 
         return (
-            <div>
+            <div className="root">
                 <AppBar />
                 <DisplayDialogIfNeeded></DisplayDialogIfNeeded>
-
-                <main>
-                    <Switch>
-                        <Route exact path='/' component={Main}/>
-                    </Switch>
-                </main>
+                <Game></Game>
+                <Drawer></Drawer>
             </div>
         );
 
