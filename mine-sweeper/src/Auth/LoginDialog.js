@@ -1,18 +1,18 @@
 import React, { Component } from 'react';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
-import RegisterForm from './RegisterForm';
+import LoginForm from './LoginForm';
 import { AppContext } from '../AppProvider';
 
-class RegisterDialog extends Component {
+class LoginDialog extends Component {
 
     render() {
         return (
             <AppContext.Consumer>
                 {(context) => <Dialog open={true}>
-                    <DialogTitle>Register</DialogTitle>
-                    <RegisterForm onUserCreated={(userCreatedWithToken) => {
-                        context.onUserCreated(userCreatedWithToken);
+                    <DialogTitle>Login</DialogTitle>
+                    <LoginForm onUserAuthenticated={(userWithToken) => {
+                        context.onUserAuthenticated(userWithToken);
                     }}/>
                 </Dialog>
                 }
@@ -21,4 +21,4 @@ class RegisterDialog extends Component {
     }
 }
 
-export default RegisterDialog;
+export default LoginDialog;

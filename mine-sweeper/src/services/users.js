@@ -7,3 +7,9 @@ export const requestCreateUser = (user) => {
     return axios.post(`${localDomain}/api/users`, user);
 
 };
+
+export const requestAuthenticateUser = (user) => {
+
+    return axios.post(`${localDomain}/auth/login`, user);
+
+};

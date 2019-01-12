@@ -17,6 +17,13 @@ const routes = [{
         handlers.postUser,
         responseSender.responseSender
     ]
+}, {
+    method: 'POST',
+    path: '/auth/login',
+    handlers: [
+        handlers.authenticateUser,
+        responseSender.responseSender
+    ]
 }];
 
 module.exports = routes;

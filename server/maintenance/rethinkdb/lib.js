@@ -8,29 +8,27 @@ const rethinkdb = rethinkdbdash(config.rethinkdb);
 
 const dropExistingTable = () => {
 
-    console.log('Check for existing database');
-
     return rethinkdb
-        .dbList()
-        .contains(DATABASE_NAME)
-        .run()
-        .then((databaseExists) => {
+    .dbList()
+    .contains(DATABASE_NAME)
+    .run()
+    .then((databaseExists) => {
 
-            if (databaseExists) {
+        if (databaseExists) {
 
-                console.log('Existing database found. Dropping...');
-                return rethinkdb.dbDrop(DATABASE_NAME).run().then(() => {
+            console.log('Existing database found. Dropping...');
+            return rethinkdb.dbDrop(DATABASE_NAME).run().then(() => {
 
-                    utils.success();
+                utils.success();
 
-                });
+            });
 
-            }
+        }
 
-            console.log('No database found');
-            return Promise.resolve();
+        console.log('No database found');
+        return Promise.resolve();
 
-        });
+    });
 
 };
 

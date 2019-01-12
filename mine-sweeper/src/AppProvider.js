@@ -39,6 +39,7 @@ export class AppProvider extends Component {
         user: this.user || null,
         token: this.token || null,
         showRegisterPopup: false,
+        showAuthenticatePopup: false,
 
         onUserCreated: (userCreated) => {
 
@@ -57,6 +58,23 @@ export class AppProvider extends Component {
                     this.saveScoreInternal(this.scoreInternal.time);
                     this.clearScore();
                 }
+
+            });
+
+        },
+
+        onUserAuthenticated: (userAuthenticated) => {
+
+            const { user, token } = userAuthenticated;
+
+            this.setState(() => ({
+                isAuthenticated: true,
+                user,
+                showAuthenticatePopup: false
+            }), () => {
+
+                storeJwtToken(token);
+                storeUser(user);
 
             });
 
@@ -85,6 +103,12 @@ export class AppProvider extends Component {
         requestShowRegisterPopup: () => {
             this.setState({
                 showRegisterPopup: true
+            });
+        },
+
+        requestShowAuthenticatePopup: () => {
+            this.setState({
+                showAuthenticatePopup: true
             });
         }
     };

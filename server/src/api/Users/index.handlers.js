@@ -1,5 +1,12 @@
+import Boom from 'boom';
 import { generateJwtToken } from 'services/utils';
-import { insertUser, getAllUsers } from './index/user.model';
+import {
+    insertUser,
+    getAllUsers,
+    hashPassword,
+    getUserByEmail
+} from './index/user.model';
+
 
 exports.getUsers = (req, res, next) =>
 
@@ -32,6 +39,39 @@ exports.postUser = (req, res, next) => {
             user: userCreated
         };
 
+        next();
+
+    })
+    .catch(next);
+
+};
+
+exports.authenticateUser = (req, res, next) => {
+
+    const { email, password } = req.body;
+
+    getUserByEmail(email)
+    .then((user) => {
+
+        if (!user) return Boom.unauthorized('email not found');
+
+        const hashedPassword = hashPassword(password);
+
+        if (hashedPassword !== user.password) {
+
+            return Boom.unauthorized('wrong password');
+
+        }
+
+        return user;
+
+    })
+    .then((user) => {
+
+        res.data = {
+            token: generateJwtToken({ id: user.id }),
+            user
+        };
         next();
 
     })

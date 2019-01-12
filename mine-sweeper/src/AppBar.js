@@ -20,7 +20,7 @@ const styles = {
 };
 
 function Greeting(context) {
-    const { isAuthenticated, user, requestShowRegisterPopup } = context;
+    const { isAuthenticated, user, requestShowRegisterPopup, requestShowAuthenticatePopup } = context;
 
     if (isAuthenticated) {
 
@@ -28,7 +28,12 @@ function Greeting(context) {
 
     } else {
 
-        return <Button color="inherit" onClick={requestShowRegisterPopup}>Register</Button>;
+        return (
+            <div>
+                <Button color="inherit" onClick={requestShowAuthenticatePopup}>Login</Button>
+                <Button color="inherit" onClick={requestShowRegisterPopup}>Register</Button>
+            </div>
+        );
 
     }
 }

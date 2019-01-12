@@ -2,7 +2,7 @@ import sha1 from 'sha1';
 import { formatRdbResult } from 'services/utils';
 import { DATABASE_NAME, USERS_TABLE_NAME } from './user.const';
 
-const hashPassword = plainPassword => sha1(plainPassword);
+export const hashPassword = plainPassword => sha1(plainPassword);
 
 export const getAllUsers = () =>
 
@@ -18,6 +18,15 @@ export const getUserById = _user =>
     .table(USERS_TABLE_NAME)
     .get(_user)
     .run();
+
+export const getUserByEmail = email =>
+
+    global.rethinkdb
+    .db(DATABASE_NAME)
+    .table(USERS_TABLE_NAME)
+    .getAll(email, { index: 'email' })
+    .run()
+    .then(users => users[0]);
 
 export const insertUser = (data) => {
 
