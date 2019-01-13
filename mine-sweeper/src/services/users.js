@@ -1,15 +1,14 @@
 import axios from 'axios';
-
-const localDomain = 'http://localhost:8089';
+import { config } from '../config';
 
 export const requestCreateUser = (user) => {
 
-    return axios.post(`${localDomain}/api/users`, user);
+    return axios.post(`${config.api}/api/users`, user);
 
 };
 
 export const requestAuthenticateUser = (user) => {
 
-    return axios.post(`${localDomain}/auth/login`, user);
+    return axios.post(`${config.api}/auth/login`, user);
 
 };

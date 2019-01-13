@@ -1,10 +1,9 @@
 import axios from 'axios';
-
-const localDomain = 'http://localhost:8089';
+import { config } from '../config';
 
 export const saveScore = (_user, score) => {
 
-    return axios.post(`${localDomain}/api/scores`, {
+    return axios.post(`${config.api}/api/scores`, {
         _user,
         score
     });
