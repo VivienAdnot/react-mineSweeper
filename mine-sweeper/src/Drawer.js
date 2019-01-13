@@ -14,7 +14,7 @@ const styles = theme => ({
     toolbar: theme.mixins.toolbar
 });
 
-function PermanentDrawerRight(props) {
+function ClippedDrawer(props) {
 
   const { classes } = props;
 
@@ -22,7 +22,7 @@ function PermanentDrawerRight(props) {
     <Drawer
       variant="permanent"
       className={classes.drawer}
-      anchor={"right"}
+      anchor={"left"}
     >
       <div className={classes.toolbar} />
       <Divider />
@@ -32,8 +32,8 @@ function PermanentDrawerRight(props) {
 
 }
 
-PermanentDrawerRight.propTypes = {
+ClippedDrawer.propTypes = {
   classes: PropTypes.object.isRequired
 }
 
-export default withStyles(styles)(PermanentDrawerRight);
+export default withStyles(styles)(ClippedDrawer);

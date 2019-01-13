@@ -7,17 +7,22 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { AppContext } from './AppProvider';
 import { config } from './config';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
-const styles = {
+const styles = theme => ({
+    root: {
+        display: 'flex',
+    },
     appBar: {
-        width: `calc(100% - ${config.drawerWidth}px)`,
-        marginRight: config.drawerWidth,
-        flexGrow: 1
+        /*width: `calc(100% - ${config.drawerWidth}px)`,*/
+        /*marginLeft: config.drawerWidth,*/
+        flexGrow: 1,
+        zIndex: theme.zIndex.drawer + 1,
     },
     flex: {
         flex: 1
     }
-};
+});
 
 function Greeting(context) {
     const { isAuthenticated, user, requestShowRegisterPopup, requestShowAuthenticatePopup } = context;
@@ -44,22 +49,20 @@ function ButtonAppBar(props) {
 
     return (
         <div className={classes.root}>
-        <AppContext.Consumer>
-            {(context) =>
+            <CssBaseline />
+            <AppContext.Consumer>
+                {(context) =>
+                    <AppBar position="fixed" className={classes.appBar} color="primary">
+                        <Toolbar>
+                            <Typography variant="title" className={classes.flex} color="inherit" noWrap>
+                                {config.title}
+                            </Typography>
 
-                <AppBar position="fixed" className={classes.appBar} color="primary">
-
-                    <Toolbar>
-                        <Typography variant="title" className={classes.flex} color="inherit" noWrap>
-                            {config.title}
-                        </Typography>
-
-                        <Greeting {...context} />
-                    </Toolbar>
-                </AppBar>
-
-            }
-            </AppContext.Consumer>
+                            <Greeting {...context} />
+                        </Toolbar>
+                    </AppBar>
+                }
+                </AppContext.Consumer>
         </div>
     );
 

@@ -13,11 +13,11 @@ class App extends Component {
 
         return (
             <div className="root">
-                <AppBar />
                 <DisplayRegisterDialogIfNeeded></DisplayRegisterDialogIfNeeded>
                 <DisplayLoginDialogIfNeeded></DisplayLoginDialogIfNeeded>
-                <Game></Game>
+                <AppBar />
                 <Drawer></Drawer>
+                <Game></Game>
             </div>
         );
 
