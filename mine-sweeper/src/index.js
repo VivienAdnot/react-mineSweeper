@@ -5,10 +5,16 @@ import App from './App';
 import { AppProvider } from './AppProvider';
 import './index.css';
 
+// split is necessary to fix this problem
+// https://github.com/ReactTraining/react-router/issues/6072
+const Provider = () => (
+    <AppProvider>
+        <App />
+    </AppProvider>
+);
+
 ReactDOM.render((
     <BrowserRouter>
-        <AppProvider>
-            <App />
-        </AppProvider>
+        <Provider/>
     </BrowserRouter>
 ), document.getElementById('root'));

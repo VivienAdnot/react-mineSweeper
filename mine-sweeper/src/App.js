@@ -5,6 +5,7 @@ import './App.css';
 import DisplayRegisterDialogIfNeeded from './Auth/DisplayRegisterDialogIfNeeded';
 import DisplayLoginDialogIfNeeded from './Auth/DisplayLoginDialogIfNeeded';
 import Game from './Game/Game';
+import Rules from './Rules';
 import Drawer from './Drawer';
 
 class App extends Component {
@@ -17,7 +18,11 @@ class App extends Component {
                 <DisplayLoginDialogIfNeeded></DisplayLoginDialogIfNeeded>
                 <AppBar />
                 <Drawer></Drawer>
-                <Game></Game>
+                <Switch>
+                    <Route exact path='/' component={Rules}/>
+                    <Route path='/rules' component={Rules}/>
+                    <Route path='/game' component={Game}/>
+                </Switch>
             </div>
         );
 
