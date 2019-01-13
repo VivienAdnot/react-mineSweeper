@@ -9,6 +9,7 @@ import { config } from './config';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Divider from '@material-ui/core/Divider';
+import { getBestScores } from './services/scores';
 
 const styles = theme => ({
     bestScoresRoot: {
@@ -27,7 +28,7 @@ class BestScores extends Component {
 
     componentDidMount() {
 
-        axios.get('http://localhost:8089/api/best-scores')
+        getBestScores()
         .then(({ data: bestScores }) => {
 
             this.setState(() => ({

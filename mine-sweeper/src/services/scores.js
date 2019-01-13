@@ -9,3 +9,9 @@ export const saveScore = (_user, score) => {
     });
 
 };
+
+export const getBestScores = () => {
+
+    return axios.get(`${config.api}/api/best-scores`);
+
+};
