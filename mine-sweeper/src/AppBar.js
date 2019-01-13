@@ -8,19 +8,25 @@ import Button from '@material-ui/core/Button';
 import { AppContext } from './AppProvider';
 import { config } from './config';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { Link } from 'react-router-dom';
 
 const styles = theme => ({
     root: {
         display: 'flex',
     },
     appBar: {
-        /*width: `calc(100% - ${config.drawerWidth}px)`,*/
-        /*marginLeft: config.drawerWidth,*/
         flexGrow: 1,
         zIndex: theme.zIndex.drawer + 1,
     },
-    flex: {
+    spacer: {
         flex: 1
+    },
+    title: {
+        marginRight: "50px"
+    },
+    btnHref: {
+        color: "white",
+        textDecoration: "none"
     }
 });
 
@@ -54,9 +60,19 @@ function ButtonAppBar(props) {
                 {(context) =>
                     <AppBar position="fixed" className={classes.appBar} color="primary">
                         <Toolbar>
-                            <Typography variant="title" className={classes.flex} color="inherit" noWrap>
+                            <Typography className={classes.title} variant="title" color="inherit" noWrap>
                                 {config.title}
                             </Typography>
+
+                            <Button>
+                                <Link className={classes.btnHref} to='/game'>Play</Link>
+                            </Button>
+
+                            <Button >
+                                <Link className={classes.btnHref} to='/rules'>Rules</Link>
+                            </Button>
+
+                            <div className={classes.spacer}></div>
 
                             <Greeting {...context} />
                         </Toolbar>
