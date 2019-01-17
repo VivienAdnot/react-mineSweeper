@@ -2,7 +2,7 @@
   "name": "react-minesweeper",
   "version": "1.0.0",
   "scripts": {
-    "start": "nodemon --exec babel-node src/server.js",
+    "start": "pm2 startOrReload ./ecosystem.config.js --update-env",
     "fixtures": "./maintenance/rethinkdb/run-fixtures.sh",
     "rethinkdb": "$(npm bin)/babel-node ./maintenance/rethinkdb/run.js --presets es2015,stage-2 --max_old_space_size=4096"
   },
