@@ -4,8 +4,6 @@ import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { Link } from 'react-router-dom';
 
-const drawerWidth = 240;
-
 const styles = theme => ({
   root: {
     marginTop: '70px',
@@ -25,9 +23,9 @@ function Rules(props) {
         <div className={classes.root}>
             <main className={classes.content}>
             <h1>Instructions for MineSweeper</h1>
-            <Typography paragraph>
-                <h2>Quick Start:</h2>
 
+            <h2>Quick Start:</h2>
+            <Typography paragraph>
                 You are presented with a board of squares. Some squares contain mines (bombs), others don't.<br/>
                 If you click on a square containing a bomb, you lose.<br/>
                 If you manage to click all the squares (without clicking on any bombs) you win.<br/>
@@ -38,9 +36,9 @@ function Rules(props) {
                 If you think you marked all the bombs, double-click on the square.<br/>
                 It will automatically open all the neighbors.<br/>
             </Typography>
-            <Typography paragraph>
-                <h2>Detailed Instructions:</h2>
 
+            <h2>Detailed Instructions:</h2>
+            <Typography paragraph>
                 A squares "neighbours" are the squares adjacent above, below, left, right, and all 4 diagonals.<br/>
                 Squares on the sides of the board or in a corner have fewer neighbors.<br/>
                 If you open a square with 0 neighboring bombs, all its neighbors will automatically open.<br/>

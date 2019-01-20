@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import RegisterDialog from './RegisterDialog';
+import React from 'react';
 import LoginDialog from './LoginDialog';
 import { AppContext } from '../AppProvider';
 

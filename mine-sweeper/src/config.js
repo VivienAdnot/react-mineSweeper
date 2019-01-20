@@ -1,5 +1,3 @@
-console.log(process.env);
-
 const dev = {
     api: 'http://localhost:8089'
 };

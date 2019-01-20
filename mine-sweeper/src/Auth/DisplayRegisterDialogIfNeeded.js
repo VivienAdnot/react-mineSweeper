@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
+import React from 'react';
 import RegisterDialog from './RegisterDialog';
-import LoginDialog from './LoginDialog';
 import { AppContext } from '../AppProvider';
 
 const DisplayRegisterDialogIfNeeded = (props) => (

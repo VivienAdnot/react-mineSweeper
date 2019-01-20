@@ -10,7 +10,6 @@ import {
     getAllNeighborEmptyPositions,
     getEmptyZoneNextNeighbours
 } from './logic/accessors';
-import { getCodeFromPosition, getCodeFromPositions } from './logic/utils';
 import { GAME_PLAYING, GAME_WIN, GAME_LOSS} from './Game';
 import { doWinFast } from './debug';
 

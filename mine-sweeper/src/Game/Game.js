@@ -36,13 +36,11 @@ class Game extends Component {
     }
 
     resetGame = () => {
-        this.state.timer = 0;
-        this.startInterval();
-
         this.setState((prevState) => ({
+            timer: 0,
             gameStatus: GAME_PLAYING,
             gameId: prevState.gameId + 1
-        }));
+        }), () => { this.startInterval() });
     };
 
     onWin = () => {
