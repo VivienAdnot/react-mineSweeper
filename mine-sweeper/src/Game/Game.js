@@ -18,13 +18,12 @@ class Game extends Component {
             timer: 0
         };
 
-        this.timerRef = null;
-
+        this.interval = null;
         this.startInterval();
     }
 
     startInterval = () => {
-        this.timerRef = setInterval(() => {
+        this.interval = setInterval(() => {
 
             this.setState((prevState) => {
 
@@ -43,18 +42,19 @@ class Game extends Component {
         }), () => { this.startInterval() });
     };
 
-    onWin = () => {
-        clearInterval(this.timerRef);
+    onWin = (context) => {
+
+        context.onWin(this.state.timer);
+        clearInterval(this.interval);
 
         this.setState(() => ({
             gameStatus: GAME_WIN
         }));
 
-        //this.props.onWin(this.state.timer);
     };
 
     onLoss = () => {
-        clearInterval(this.timerRef);
+        clearInterval(this.interval);
         this.setState(() => ({
             gameStatus: GAME_LOSS
         }));
@@ -86,42 +86,33 @@ class Game extends Component {
         }
 
         return (
-            <div className="game container">
+            <AppContext.Consumer>
+            {(context) =>
+                <div className="game container">
 
-                {titleRibbon}
+                    {titleRibbon}
 
-                <div className="game-board">
-                    <AppContext.Consumer>
-                        {(context) =>
+                    <div className="game-board">
+                        <Board
+                            key={this.state.gameId}
+                            rowsLength={16}
+                            columnsLength={30}
+                            bombAmount={99}
+                            gameStatus={this.state.gameStatus}
+                            onWin={() => this.onWin(context)}
+                            onLoss={this.onLoss}
+                        ></Board>
+                    </div>
 
-                            <Board
-                                key={this.state.gameId}
-                                rowsLength={16}
-                                columnsLength={30}
-                                bombAmount={99}
-                                gameStatus={this.state.gameStatus}
-                                onWin={() => {
 
-                                    context.onWin(this.state.timer);
-                                    this.onWin();
-
-                                }}
-                                onLoss={this.onLoss}
-                            ></Board>
-
-                        }
-                    </AppContext.Consumer>
-
-                </div>
-
-                {[GAME_WIN, GAME_LOSS].includes(this.state.gameStatus) && (
                     <div className="result">
                         <button className="play-again" onClick={this.resetGame}>
-                            Play Again
+                            Restart game
                         </button>
                     </div>
-                )}
-            </div>
+                </div>
+            }
+            </AppContext.Consumer>
         );
 
     };
