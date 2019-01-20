@@ -22,11 +22,25 @@ const styles = theme => ({
         flex: 1
     },
     title: {
-        marginRight: "50px"
+        marginRight: '50px'
     },
     btnHref: {
-        color: "white",
-        textDecoration: "none"
+        '&:hover': {
+            textDecoration: 'none',
+            backgroundColor: 'rgba(0, 0, 0, 0.08)'
+        },
+        padding: '8px 16px',
+        fontSize: '0.875rem',
+        minWidth: '64px',
+        boxSizing: 'border-box',
+        minHeight: '36px',
+        fontWeight: 500,
+        fontFamily: 'Roboto',
+        lineHeight: '1.4em',
+        borderRadius: '4px',
+        textTransform: 'uppercase',
+        color: 'white',
+        textDecoration: 'none'
     }
 });
 
@@ -64,13 +78,8 @@ function ButtonAppBar(props) {
                                 {config.title}
                             </Typography>
 
-                            <Button>
-                                <Link className={classes.btnHref} to='/game'>Play</Link>
-                            </Button>
-
-                            <Button >
-                                <Link className={classes.btnHref} to='/rules'>Rules</Link>
-                            </Button>
+                            <Link className={classes.btnHref} to='/game'>Play</Link>
+                            <Link className={classes.btnHref} to='/rules'>Rules</Link>
 
                             <div className={classes.spacer}></div>
 
