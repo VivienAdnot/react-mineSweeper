@@ -9,7 +9,7 @@ class LoginDialog extends Component {
     render() {
         return (
             <AppContext.Consumer>
-                {(context) => <Dialog open={true}>
+                {(context) => <Dialog open={true} onClose={() => context.requestHideAuthenticatePopup()}>
                     <DialogTitle>Login</DialogTitle>
                     <LoginForm onUserAuthenticated={(userWithToken) => {
                         context.onUserAuthenticated(userWithToken);

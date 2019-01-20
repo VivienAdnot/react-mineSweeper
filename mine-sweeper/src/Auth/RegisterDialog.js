@@ -9,7 +9,7 @@ class RegisterDialog extends Component {
     render() {
         return (
             <AppContext.Consumer>
-                {(context) => <Dialog open={true}>
+                {(context) => <Dialog open={true}  onClose={() => context.requestHideRegisterPopup()}>
                     <DialogTitle>Register</DialogTitle>
                     <RegisterForm onUserCreated={(userCreatedWithToken) => {
                         context.onUserCreated(userCreatedWithToken);

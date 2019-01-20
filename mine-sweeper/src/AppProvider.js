@@ -110,6 +110,18 @@ export class AppProvider extends Component {
             this.setState({
                 showAuthenticatePopup: true
             });
+        },
+
+        requestHideAuthenticatePopup: () => {
+            this.setState({
+                showAuthenticatePopup: false
+            });
+        },
+
+        requestHideRegisterPopup: () => {
+            this.setState({
+                showRegisterPopup: false
+            });
         }
     };
 
