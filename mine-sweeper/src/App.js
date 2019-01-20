@@ -8,9 +8,15 @@ import Game from './Game/Game';
 import Rules from './Rules';
 import Drawer from './Drawer';
 
+const isMobileDevice = () => {
+
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent);
+
+}
+
 const minimumScreenSizeOk = () => {
 
-    return window.innerWidth >= 1200 && window.innerHeight >= 700;
+    return !isMobileDevice() && window.innerWidth >= 1200 && window.innerHeight >= 700;
 
 }
 
