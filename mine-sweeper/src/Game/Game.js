@@ -16,9 +16,10 @@ import {
 import { doWinFast } from './debug';
 import { config } from '../config';
 
-export const GAME_PLAYING = 0;
-export const GAME_WIN = 1;
-export const GAME_LOSS = 2;
+export const GAME_READY = 0;
+export const GAME_PLAYING = 1;
+export const GAME_WIN = 2;
+export const GAME_LOSS = 3;
 
 class Game extends Component {
 
@@ -30,14 +31,41 @@ class Game extends Component {
 
         this.state = {
             gameId: 1,
-            gameStatus: GAME_PLAYING,
-            timer: 0,
+            gameStatus: GAME_READY,
+            timer: -1,
             boardMap: buildMap(this.bombPositions, config.rowsLength, config.columnsLength)
         };
 
         this.interval = null;
-        this.startInterval();
+        //this.startInterval();
 
+    }
+
+    startGame = () => {
+        this.interval = setInterval(() => {
+
+            this.setState((prevState) => {
+
+                return {
+                    timer: prevState.timer + 1,
+                    gameStatus: GAME_PLAYING
+                };
+
+            })
+
+        }, 1000);
+    }
+
+    resetGame = () => {
+        this.bombPositions = buildBombPositions(config.rowsLength, config.columnsLength, config.bombAmount);
+        this.positionLost = null;
+
+        this.setState((prevState) => ({
+            timer: -1,
+            gameStatus: GAME_READY,
+            gameId: prevState.gameId + 1,
+            boardMap: buildMap(this.bombPositions, config.rowsLength, config.columnsLength)
+        }), () => { this.startGame() });
     }
 
     markAllBombs = () => {
@@ -54,7 +82,7 @@ class Game extends Component {
 
         });
 
-    };
+    }
 
     showAllBombs = (lostPosition) => {
 
@@ -70,7 +98,7 @@ class Game extends Component {
 
         })
 
-    };
+    }
 
     onSquareRightClick = (position) => {
 
@@ -95,9 +123,13 @@ class Game extends Component {
             }
 
         });
-    };
+    }
 
     onSquareLeftClick = (position) => {
+
+        if (this.state.gameStatus === GAME_READY) {
+            this.startGame();
+        }
 
         if (this.state.boardMap[position.x][position.y].visibility !== 'hidden') {
             return;
@@ -136,7 +168,8 @@ class Game extends Component {
             }
 
         });
-    };
+
+    }
 
     onSquareDoubleClick = (position) => {
 
@@ -206,7 +239,7 @@ class Game extends Component {
 
         });
 
-    };
+    }
 
     computeGameStatus = () => {
         const isBombVisible = () => {
@@ -247,7 +280,7 @@ class Game extends Component {
             return GAME_WIN;
         }
         return GAME_PLAYING;
-    };
+    }
 
     renderSquare(squareInfo) {
 
@@ -259,6 +292,8 @@ class Game extends Component {
 
         const isBomb = squareInfo.value === 'B';
 
+        const isClickable = this.state.gameStatus === GAME_READY || this.state.gameStatus === GAME_PLAYING;
+
         return (
             <Square
                 key={keyValue}
@@ -267,38 +302,14 @@ class Game extends Component {
                 visibility={squareInfo.visibility}
                 isPositionLost={isPositionLost}
                 isBomb={isBomb}
+                clickable={isClickable}
                 onLeftClick={this.onSquareLeftClick}
                 onRightClick={this.onSquareRightClick}
                 onDblClick={this.onSquareDoubleClick}
-                clickable={this.state.gameStatus === GAME_PLAYING}
             ></Square>
         );
 
     }
-
-    startInterval = () => {
-        this.interval = setInterval(() => {
-
-            this.setState((prevState) => {
-
-                return { timer: prevState.timer + 1 };
-
-            })
-
-        }, 1000);
-    }
-
-    resetGame = () => {
-        this.bombPositions = buildBombPositions(config.rowsLength, config.columnsLength, config.bombAmount);
-        this.positionLost = null;
-
-        this.setState((prevState) => ({
-            timer: 0,
-            gameStatus: GAME_PLAYING,
-            gameId: prevState.gameId + 1,
-            boardMap: buildMap(this.bombPositions, config.rowsLength, config.columnsLength)
-        }), () => { this.startInterval() });
-    };
 
     onWin = () => {
 
@@ -311,7 +322,7 @@ class Game extends Component {
             gameStatus: GAME_WIN
         }));
 
-    };
+    }
 
     onLoss = (position) => {
         this.showAllBombs(position);
@@ -321,7 +332,7 @@ class Game extends Component {
         this.setState(() => ({
             gameStatus: GAME_LOSS
         }));
-    };
+    }
 
     render() {
 
@@ -335,6 +346,12 @@ class Game extends Component {
                 </div>
 
             );
+
+        } else if (this.state.gameStatus === GAME_READY) {
+
+            titleRibbon = (<div className="alert alert-warning">
+                Ready to Play. CLick on a square to start the game !
+            </div>);
 
         } else if (this.state.gameStatus === GAME_LOSS) {
 
@@ -379,7 +396,7 @@ class Game extends Component {
                 </div>
         );
 
-    };
+    }
 }
 
 export default Game;
