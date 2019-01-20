@@ -267,16 +267,16 @@ class Board extends Component {
 
         return (
             <Square
-            key={keyValue}
-            position={squareInfo.position}
-            value={squareInfo.value}
-            visibility={squareInfo.visibility}
-            isPositionLost={isPositionLost}
-            isBomb={isBomb}
-            onLeftClick={this.onSquareLeftClick}
-            onRightClick={this.onSquareRightClick}
-            onDblClick={this.onSquareDoubleClick}
-            clickable={this.props.gameStatus === GAME_PLAYING}
+                key={keyValue}
+                position={squareInfo.position}
+                value={squareInfo.value}
+                visibility={squareInfo.visibility}
+                isPositionLost={isPositionLost}
+                isBomb={isBomb}
+                onLeftClick={this.onSquareLeftClick}
+                onRightClick={this.onSquareRightClick}
+                onDblClick={this.onSquareDoubleClick}
+                clickable={this.props.gameStatus === GAME_PLAYING}
             ></Square>
         );
 

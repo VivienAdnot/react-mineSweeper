@@ -104,7 +104,6 @@ class Game extends Component {
                         ></Board>
                     </div>
 
-
                     <div className="result">
                         <button className="play-again" onClick={this.resetGame}>
                             Restart game
