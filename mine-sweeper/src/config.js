@@ -11,7 +11,10 @@ const envConfig = process.env.NODE_ENV === 'production' ? prod : dev;
 export const config = {
     ...envConfig,
     title: 'Minesweeper',
-    drawerWidth: 350
+    drawerWidth: 350,
+    rowsLength: 16,
+    columnsLength: 30,
+    bombAmount: 99
 };
 
 export const _ = undefined;

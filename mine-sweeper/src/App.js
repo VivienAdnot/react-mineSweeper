@@ -7,6 +7,7 @@ import DisplayLoginDialogIfNeeded from './Auth/DisplayLoginDialogIfNeeded';
 import Game from './Game/Game';
 import Rules from './Rules';
 import Drawer from './Drawer';
+import { AppContext } from './AppProvider';
 
 const isMobileDevice = () => {
 
@@ -23,17 +24,21 @@ const minimumScreenSizeOk = () => {
 const renderApp = () => {
 
     return (
-        <div className="root">
-            <DisplayRegisterDialogIfNeeded></DisplayRegisterDialogIfNeeded>
-            <DisplayLoginDialogIfNeeded></DisplayLoginDialogIfNeeded>
-            <AppBar />
-            <Drawer></Drawer>
-            <Switch>
-                <Route exact path='/' component={Rules}/>
-                <Route path='/rules' component={Rules}/>
-                <Route path='/game' component={Game}/>
-            </Switch>
-        </div>
+        <AppContext.Consumer>
+        {(context) =>
+            <div className="root">
+                <DisplayRegisterDialogIfNeeded></DisplayRegisterDialogIfNeeded>
+                <DisplayLoginDialogIfNeeded></DisplayLoginDialogIfNeeded>
+                <AppBar />
+                <Drawer></Drawer>
+                <Switch>
+                    <Route exact path='/' component={Rules}/>
+                    <Route path='/rules' component={Rules}/>
+                    <Route path='/game' render={(props) => <Game {...props} context={context} />}/>
+                </Switch>
+            </div>
+        }
+        </AppContext.Consumer>
     );
 
 };
