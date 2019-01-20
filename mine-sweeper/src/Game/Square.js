@@ -29,7 +29,7 @@ class Square extends PureComponent {
             <button
                 className={fullClassName}
 
-                onClick={() => {
+                onLeftClick={() => {
                     if (this.props.clickable) this.props.onLeftClick(this.props.position)
                 }}
 

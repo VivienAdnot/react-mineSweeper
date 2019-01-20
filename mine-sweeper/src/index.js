@@ -5,8 +5,6 @@ import App from './App';
 import { AppProvider } from './AppProvider';
 import './index.css';
 
-console.log(process.env.REACT_APP_STAGE);
-
 // split is necessary to fix this problem
 // https://github.com/ReactTraining/react-router/issues/6072
 const Provider = () => (
