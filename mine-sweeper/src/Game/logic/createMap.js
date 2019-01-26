@@ -15,8 +15,10 @@ const countNeighborBombPositions = (bombPositions, position) => {
 
 };
 
-export const buildBombPositions = (forbiddenPosition) => {
+export const buildBombPositions = (startPosition) => {
     let bombPositions = [];
+    const startPositionNeighbors = getNeighbors(startPosition);
+    const forbiddenPositions = [startPosition, ...startPositionNeighbors];
 
     while (bombPositions.length !== config.bombAmount) {
 
@@ -27,7 +29,9 @@ export const buildBombPositions = (forbiddenPosition) => {
 
         if (
             !isPositionBomb(bombPositions, newBombPosition)
-            && !arePositionEquals(newBombPosition, forbiddenPosition)) {
+            && !forbiddenPositions.some(
+                forbiddenPosition => arePositionEquals(newBombPosition, forbiddenPosition)
+            )) {
 
             bombPositions.push(newBombPosition);
 
