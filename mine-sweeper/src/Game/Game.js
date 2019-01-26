@@ -83,8 +83,8 @@ class Game extends Component {
         }, callback);
 
         const t2 = performance.now();
-        console.log("build bomb took " + (t1 - t0) + " milliseconds.")
-        console.log("build map took " + (t2 - t1) + " milliseconds.")
+        // console.log("build bomb took " + (t1 - t0) + " milliseconds.")
+        // console.log("build map took " + (t2 - t1) + " milliseconds.")
 
     }
 
