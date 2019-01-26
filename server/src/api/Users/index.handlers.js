@@ -53,13 +53,13 @@ exports.authenticateUser = (req, res, next) => {
     getUserByEmail(email)
     .then((user) => {
 
-        if (!user) return Boom.unauthorized('email not found');
+        if (!user) throw new Error(Boom.unauthorized('email not found'));
 
         const hashedPassword = hashPassword(password);
 
         if (hashedPassword !== user.password) {
 
-            return Boom.unauthorized('wrong password');
+            throw new Error(Boom.unauthorized('wrong password'));
 
         }
 
