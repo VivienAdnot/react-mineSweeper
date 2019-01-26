@@ -17,7 +17,7 @@ const isMobileDevice = () => {
 
 const minimumScreenSizeOk = () => {
 
-    return !isMobileDevice() && window.innerWidth >= 1200 && window.innerHeight >= 700;
+    return !isMobileDevice() && window.innerWidth >= 1200 && window.innerHeight >= 600;
 
 }
 

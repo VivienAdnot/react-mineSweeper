@@ -1,6 +1,6 @@
 module.exports = {
     apps: [{
-        name: 'API',
+        name: 'minesweeper-server',
         script: './src/server.js',
         interpreter: './node_modules/.bin/babel-node',
         env: {

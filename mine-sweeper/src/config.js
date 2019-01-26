@@ -8,13 +8,20 @@ const prod = {
 
 const envConfig = process.env.NODE_ENV === 'production' ? prod : dev;
 
+const rowsLength = 16;
+const columnsLength = 30;
+const bombAmount = 99;
+
 export const config = {
     ...envConfig,
     title: 'Minesweeper',
     drawerWidth: 350,
-    rowsLength: 16,
-    columnsLength: 30,
-    bombAmount: 99
+    rowsLength,
+    columnsLength,
+    bombAmount,
+    squaresSum: rowsLength * columnsLength,
+    numberSquaresSum: rowsLength * columnsLength - bombAmount,
+    debugMode: true
 };
 
 export const _ = undefined;

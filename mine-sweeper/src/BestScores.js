@@ -44,7 +44,7 @@ class BestScores extends Component {
 
         return(
             <div className={classes.bestScoresRoot}>
-                <h1 className={classes.title}>Best Scores</h1>
+                <h1 className={classes.title}>Fastest finishes</h1>
                 <Divider />
 
                 <Table>
@@ -52,7 +52,7 @@ class BestScores extends Component {
                         <TableRow>
                             <TableCell numeric>Ranking</TableCell>
                             <TableCell>Name</TableCell>
-                            <TableCell numeric>Score</TableCell>
+                            <TableCell numeric>Time</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

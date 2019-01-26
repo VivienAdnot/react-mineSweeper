@@ -1,102 +1,193 @@
 import React, { Component } from 'react';
 import './Game.css';
-
-
 import Square from './Square';
 import {
     buildBombPositions,
-    buildMap
+    buildBoard,
+    clearBoard
 } from './logic/createMap';
 import {
-    getNeighborPositions,
-    getNeighborHiddenPositions,
+    getNeighbors,
+    getNeighborsHidden,
+    getNeighborsMarked,
     getAllNeighborEmptyPositions,
     getEmptyZoneNextNeighbours
 } from './logic/accessors';
 import { doWinFast } from './debug';
 import { config } from '../config';
+import { getCodeFromPositions } from './logic/utils';
+import { HIDDEN, VISIBLE, MARKED, BOMB } from './logic/constants';
 
 export const GAME_READY = 0;
 export const GAME_PLAYING = 1;
 export const GAME_WIN = 2;
 export const GAME_LOSS = 3;
 
+const initialInternals = () => ({
+    positionLost: null,
+    interval: null,
+    bombs: []
+});
+
+// it's useless to use a function here, but i want to keep consistency with startGameInitialState
+const initialState = () => ({
+    gameStatus: GAME_READY,
+    timer: 0,
+    board: clearBoard()
+});
+
+// interval must be set manually
+const startGameInternals = (startPosition) => ({
+    positionLost: null,
+    bombs: buildBombPositions(startPosition)
+});
+
+const startGameState = (bombs) => ({
+    gameStatus: GAME_PLAYING,
+    timer: 0,
+    board: buildBoard(bombs)
+});
+
 class Game extends Component {
 
     constructor(props) {
         super(props);
 
-        this.bombPositions = buildBombPositions(config.rowsLength, config.columnsLength, config.bombAmount);
-        this.positionLost = null;
-
-        this.state = {
-            gameId: 1,
-            gameStatus: GAME_READY,
-            timer: -1,
-            boardMap: buildMap(this.bombPositions, config.rowsLength, config.columnsLength)
+        this.internals = {
+            ...initialInternals()
         };
 
-        this.interval = null;
-        //this.startInterval();
+        this.state = {
+            ...initialState()
+        };
 
     }
 
-    startGame = () => {
-        this.interval = setInterval(() => {
+    startGame = (startPosition, callback) => {
 
-            this.setState((prevState) => {
+        const t0 = performance.now();
 
-                return {
-                    timer: prevState.timer + 1,
-                    gameStatus: GAME_PLAYING
-                };
+        this.internals = {
+            ...startGameInternals(startPosition),
+            interval: setInterval(() => {
+                this.setState((prevState) => ({
+                    timer: prevState.timer + 1
+                }))
+            }, 1000)
+        };
 
-            })
+        const t1 = performance.now();
 
-        }, 1000);
+        this.setState({
+            ...startGameState(this.internals.bombs)
+        }, callback);
+
+        const t2 = performance.now();
+        console.log("build bomb took " + (t1 - t0) + " milliseconds.")
+        console.log("build map took " + (t2 - t1) + " milliseconds.")
+
     }
 
     resetGame = () => {
-        this.bombPositions = buildBombPositions(config.rowsLength, config.columnsLength, config.bombAmount);
-        this.positionLost = null;
 
-        this.setState((prevState) => ({
-            timer: -1,
-            gameStatus: GAME_READY,
-            gameId: prevState.gameId + 1,
-            boardMap: buildMap(this.bombPositions, config.rowsLength, config.columnsLength)
-        }), () => { this.startGame() });
+        clearInterval(this.internals.interval);
+
+        this.internals = {
+            ...initialInternals()
+        };
+
+        this.setState({
+            ...initialState()
+        });
     }
 
     markAllBombs = () => {
 
         this.setState((prevState) => {
 
-            this.bombPositions.forEach((bombPosition) => {
-                prevState.boardMap[bombPosition.x][bombPosition.y].visibility = 'marked';
+            this.internals.bombs.forEach((bomb) => {
+                prevState.board[bomb.x][bomb.y].visibility = MARKED;
             });
 
             return {
-                boardMap: prevState.boardMap
+                board: prevState.board
             }
 
         });
 
     }
 
-    showAllBombs = (lostPosition) => {
+    revealMap = (lostPosition) => {
 
         this.setState((prevState) => {
 
-            this.bombPositions.forEach((bombPosition) => {
-                prevState.boardMap[bombPosition.x][bombPosition.y].visibility = 'visible';
+            this.internals.bombs.forEach((bomb) => {
+                prevState.board[bomb.x][bomb.y].visibility = VISIBLE;
             });
 
             return {
-                boardMap: prevState.boardMap
+                board: prevState.board
             }
 
         })
+
+    }
+
+    onSquareLeftClick = (positionClicked, value, visibility) => {
+
+        const action = (isFirstClick = false) => {
+
+            if (visibility !== HIDDEN) return;
+
+            if (isFirstClick) {
+
+                value = this.state.board[positionClicked.x][positionClicked.y].value;
+
+            }
+
+            let positionsToDisplay = [positionClicked];
+
+            if (value === 0) {
+
+                positionsToDisplay = getAllNeighborEmptyPositions(this.state.board, positionClicked);
+                positionsToDisplay = getEmptyZoneNextNeighbours(this.state.board, positionsToDisplay);
+
+            }
+
+            this.setState((prevState) => {
+
+                positionsToDisplay.forEach((positionToDisplay) => {
+                    prevState.board[positionToDisplay.x][positionToDisplay.y].visibility = VISIBLE;
+                });
+
+                return {
+                    board: prevState.board
+                }
+
+            }, () => {
+                const gameStatus = this.computeGameStatus();
+
+                if (gameStatus === GAME_LOSS) {
+
+                    this.onLoss(positionClicked);
+
+                } else if (gameStatus === GAME_WIN) {
+
+                    this.onWin();
+
+                }
+
+            });
+
+        };
+
+        if (this.state.gameStatus === GAME_READY) {
+
+            this.startGame(positionClicked, () => action(true));
+
+        } else {
+            action();
+        }
 
     }
 
@@ -104,18 +195,18 @@ class Game extends Component {
 
         this.setState((prevState) => {
 
-            switch(prevState.boardMap[position.x][position.y].visibility) {
-                case 'hidden':
+            switch(prevState.board[position.x][position.y].visibility) {
+                case HIDDEN:
 
-                    prevState.boardMap[position.x][position.y].visibility = 'marked';
+                    prevState.board[position.x][position.y].visibility = MARKED;
                     return {
-                        map: prevState.boardMap
+                        map: prevState.board
                     }
 
-                case 'marked':
-                    prevState.boardMap[position.x][position.y].visibility = 'hidden';
+                case MARKED:
+                    prevState.board[position.x][position.y].visibility = HIDDEN;
                     return {
-                        map: prevState.boardMap
+                        map: prevState.board
                     }
 
                 default:
@@ -125,66 +216,14 @@ class Game extends Component {
         });
     }
 
-    onSquareLeftClick = (position) => {
-
-        if (this.state.gameStatus === GAME_READY) {
-            this.startGame();
-        }
-
-        if (this.state.boardMap[position.x][position.y].visibility !== 'hidden') {
-            return;
-        }
-
-        let positionsToDisplay = [position];
-
-        if (this.state.boardMap[position.x][position.y].value === 0) {
-
-            positionsToDisplay = getAllNeighborEmptyPositions(this.state.boardMap, position);
-            positionsToDisplay = getEmptyZoneNextNeighbours(this.state.boardMap, positionsToDisplay);
-
-        }
-
-        this.setState((prevState) => {
-
-            positionsToDisplay.forEach((positionToDisplay) => {
-                prevState.boardMap[positionToDisplay.x][positionToDisplay.y].visibility = 'visible';
-            });
-
-            return {
-                boardMap: prevState.boardMap
-            }
-
-        }, () => {
-            const gameStatus = this.computeGameStatus();
-
-            if (gameStatus === GAME_LOSS) {
-
-                this.onLoss(position);
-
-            } else if (gameStatus === GAME_WIN) {
-
-                this.onWin();
-
-            }
-
-        });
-
-    }
-
     onSquareDoubleClick = (position) => {
 
-        let targetValue = this.state.boardMap[position.x][position.y].value;
+        let targetValue = this.state.board[position.x][position.y].value;
 
         const isAllowed = (position) => {
 
-            let markedPositions = getNeighborPositions(this.state.boardMap, position)
-            .filter((neighborPosition) => {
-
-                return this.state.boardMap[neighborPosition.x][neighborPosition.y].visibility === 'marked';
-
-            });
-
-            return targetValue === markedPositions.length;
+            const neighborMarkedPositions = getNeighborsMarked(this.state.board, position);
+            return targetValue === neighborMarkedPositions.length;
 
         };
 
@@ -192,24 +231,21 @@ class Game extends Component {
             return;
         }
 
-        let positionsToDisplay = getNeighborHiddenPositions(this.state.boardMap, position)
-        .filter(neighborPosition => {
-            return this.state.boardMap[neighborPosition.x][neighborPosition.y].visibility !== 'marked';
-        });
+        let positionsToDisplay = getNeighborsHidden(this.state.board, position)
 
         let emptyNeighbourPositions = positionsToDisplay
         .filter(neighborPosition => {
-            return this.state.boardMap[neighborPosition.x][neighborPosition.y].value === 0;
+            return this.state.board[neighborPosition.x][neighborPosition.y].value === 0;
         });
 
         if (emptyNeighbourPositions.length) {
 
             emptyNeighbourPositions = getAllNeighborEmptyPositions(
-                this.state.boardMap,
+                this.state.board,
                 emptyNeighbourPositions[0],
                 emptyNeighbourPositions);
 
-            const emptyZone = getEmptyZoneNextNeighbours(this.state.boardMap, emptyNeighbourPositions);
+            const emptyZone = getEmptyZoneNextNeighbours(this.state.board, emptyNeighbourPositions);
 
             positionsToDisplay.push(...emptyZone);
         }
@@ -217,11 +253,11 @@ class Game extends Component {
         this.setState((prevState) => {
 
             positionsToDisplay.forEach((positionToDisplay) => {
-                prevState.boardMap[positionToDisplay.x][positionToDisplay.y].visibility = 'visible';
+                prevState.board[positionToDisplay.x][positionToDisplay.y].visibility = VISIBLE;
             });
 
             return {
-                boardMap: prevState.boardMap
+                board: prevState.board
             }
 
         }, () => {
@@ -242,11 +278,11 @@ class Game extends Component {
     }
 
     computeGameStatus = () => {
-        const isBombVisible = () => {
-            return this.state.boardMap.some((row) => {
+        const isBombRevealed = () => {
+            return this.state.board.some((row) => {
 
                 return row.some((squareInfo) => {
-                    return squareInfo.value === 'B' && squareInfo.visibility === 'visible';
+                    return squareInfo.value === 'B' && squareInfo.visibility === VISIBLE;
                 });
 
             })
@@ -254,19 +290,20 @@ class Game extends Component {
         }
 
         const areAllNumberSquaresDisplayed = () => {
-            const squaresSum = this.state.boardMap.length * this.state.boardMap[0].length;
-            const numberSquaresSum = squaresSum - this.bombPositions.length;
 
-            const visibleNumberSquares = this.state.boardMap.reduce((acc, row) => {
+            const visibleNumberSquares = this.state.board.reduce((acc, row) => {
 
-                const visibleNumberSquaresPerRow = row.filter((squareInfo) => {
-                    return squareInfo.value !== 'B' && squareInfo.visibility === 'visible';
+                const visibleNumberSquaresPerRow = row.filter((square) => {
+                    return square.value !== BOMB && square.visibility === VISIBLE;
                 });
+
+                //console.log('visibleNumberSquaresPerRow', visibleNumberSquaresPerRow, acc + visibleNumberSquaresPerRow.length);
 
                 return acc + visibleNumberSquaresPerRow.length;
             }, 0);
 
-            return numberSquaresSum === visibleNumberSquares;
+            //console.log('== ?', config.numberSquaresSum === visibleNumberSquares);
+            return config.numberSquaresSum === visibleNumberSquares;
         };
 
         // shortcut for debug:
@@ -274,7 +311,7 @@ class Game extends Component {
             return GAME_WIN;
         }
 
-        if (isBombVisible()) {
+        if (isBombRevealed()) {
             return GAME_LOSS;
         } else if (areAllNumberSquaresDisplayed()) {
             return GAME_WIN;
@@ -284,11 +321,11 @@ class Game extends Component {
 
     renderSquare(squareInfo) {
 
-        const keyValue = squareInfo.position.x * this.state.boardMap[0].length + squareInfo.position.y;
+        const keyValue = squareInfo.position.x * this.state.board[0].length + squareInfo.position.y;
 
-        const isPositionLost = this.positionLost
-            && squareInfo.position.x === this.positionLost.x
-            && squareInfo.position.y === this.positionLost.y;
+        const isPositionLost = this.internals.positionLost
+            && squareInfo.position.x === this.internals.positionLost.x
+            && squareInfo.position.y === this.internals.positionLost.y;
 
         const isBomb = squareInfo.value === 'B';
 
@@ -316,7 +353,7 @@ class Game extends Component {
         this.markAllBombs();
 
         this.props.context.onWin(this.state.timer);
-        clearInterval(this.interval);
+        clearInterval(this.internals.interval);
 
         this.setState(() => ({
             gameStatus: GAME_WIN
@@ -325,10 +362,10 @@ class Game extends Component {
     }
 
     onLoss = (position) => {
-        this.showAllBombs(position);
-        this.positionLost = position;
+        this.revealMap(position);
+        this.internals.positionLost = position;
 
-        clearInterval(this.interval);
+        clearInterval(this.internals.interval);
         this.setState(() => ({
             gameStatus: GAME_LOSS
         }));
@@ -366,34 +403,36 @@ class Game extends Component {
         }
 
         return (
-                <div className="game container">
+            <div className="game container">
 
-                    {titleRibbon}
+                {titleRibbon}
 
-                    <div className="game-board">
-                        <div>
-                        {
-                            Array.from({length: config.rowsLength}, (value, index) => index).map(x => {
-                                return (
-                                    <div key={x} className="board-row">
-                                        {
-                                            Array.from({length: config.columnsLength}, (value, index) => index).map(y => {
-                                                return this.renderSquare(this.state.boardMap[x][y]);
-                                            })
-                                        }
-                                    </div>
-                                );
-                            })
-                        }
-                        </div>
-                    </div>
-
-                    <div className="result">
-                        <button className="play-again" onClick={this.resetGame}>
-                            Restart game
-                        </button>
+                <div className="game-board">
+                    <div>
+                    {
+                        Array.from({length: config.rowsLength}, (value, x) => x)
+                        .map(x => {
+                            return (
+                                <div key={x} className="board-row">
+                                    {
+                                        Array.from({length: config.columnsLength}, (value, y) => y).map(y => {
+                                            const square = this.state.board[x][y];
+                                            return this.renderSquare(square);
+                                        })
+                                    }
+                                </div>
+                            );
+                        })
+                    }
                     </div>
                 </div>
+
+                <div className="result">
+                    <button className="play-again" onClick={this.resetGame}>
+                        Restart game
+                    </button>
+                </div>
+            </div>
         );
 
     }

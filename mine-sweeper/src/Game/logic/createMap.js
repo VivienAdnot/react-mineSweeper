@@ -1,40 +1,36 @@
-import { getNeighborPositions } from './accessors';
+import { getNeighbors } from './accessors';
+import { config } from '../../config';
+import { HIDDEN, BOMB } from './constants';
+import { randomNumberBetween, arePositionEquals } from './utils';
 
-const randomNumberBetween = (min, max) =>
-    Math.floor(Math.random() * (max - min + 1)) + min;
+const isPositionBomb = (bombPositions, targetPosition) => bombPositions.some(
+    bombPosition => arePositionEquals(bombPosition, targetPosition)
+);
 
-const isPositionBomb = (bombPositions, targetPosition) => bombPositions.some(position => {
-    return position.x === targetPosition.x
-        && position.y === targetPosition.y;
-});
+const countNeighborBombPositions = (bombPositions, position) => {
 
-const getVirtualNeighborPositions = (position, rowsLength, columnsLength) => {
-
-    let tempArray = Array(rowsLength).fill(Array(columnsLength));
-    return getNeighborPositions(tempArray, position);
-
-}
-
-const getNeighborBombPositions = (bombPositions, position, rowsLength, columnsLength) => {
-
-    return getVirtualNeighborPositions(position, rowsLength, columnsLength).filter(neighborPosition => {
-        return isPositionBomb(bombPositions, neighborPosition);
-    });
+    return getNeighbors(position)
+    .filter(neighborPosition => isPositionBomb(bombPositions, neighborPosition))
+    .length;
 
 };
 
-export const buildBombPositions = (rowsLength, columnsLength, bombAmount) => {
+export const buildBombPositions = (forbiddenPosition) => {
     let bombPositions = [];
 
-    while (bombPositions.length !== bombAmount) {
+    while (bombPositions.length !== config.bombAmount) {
 
         let newBombPosition = {
-            x: randomNumberBetween(0, rowsLength - 1),
-            y: randomNumberBetween(0, columnsLength -1)
+            x: randomNumberBetween(0, config.rowsLength - 1),
+            y: randomNumberBetween(0, config.columnsLength -1)
         };
 
-        if (!isPositionBomb(bombPositions, newBombPosition)) {
+        if (
+            !isPositionBomb(bombPositions, newBombPosition)
+            && !arePositionEquals(newBombPosition, forbiddenPosition)) {
+
             bombPositions.push(newBombPosition);
+
         }
 
     }
@@ -43,19 +39,32 @@ export const buildBombPositions = (rowsLength, columnsLength, bombAmount) => {
 
 };
 
-export const buildMap = (bombPositions, rowsLength, columnsLength) => {
-    let positions = Array.from({length: rowsLength}, (value, x) => {
-        return Array.from({length: columnsLength}, (value, y) => {
+export const buildBoard = (bombPositions) => {
+
+    return Array.from({length: config.rowsLength}, (value, x) => {
+        return Array.from({length: config.columnsLength}, (value, y) => {
+            const currentPosition = {x, y};
             return {
-                position: {x, y},
-                value: (isPositionBomb(bombPositions, {x, y})
-                    ? 'B'
-                    : getNeighborBombPositions(bombPositions, {x, y}, rowsLength, columnsLength).length
+                position: currentPosition,
+                value: (isPositionBomb(bombPositions, currentPosition)
+                    ? BOMB
+                    : countNeighborBombPositions(bombPositions, currentPosition)
                 ),
-                visibility: 'hidden' // visible, marked
+                visibility: HIDDEN
             };
         });
     });
-
-    return positions;
 };
+
+// you need to build another map before showing it again
+export const clearBoard = () => {
+    return Array.from({length: config.rowsLength}, (value, x) => {
+        return Array.from({length: config.columnsLength}, (value, y) => {
+            return {
+                position: {x, y},
+                value: 'X',
+                visibility: HIDDEN
+            };
+        });
+    });
+}

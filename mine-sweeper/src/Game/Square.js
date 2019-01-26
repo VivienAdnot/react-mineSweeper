@@ -1,16 +1,31 @@
 import React, { PureComponent } from 'react';
 import './Square.css';
+import { HIDDEN, VISIBLE, MARKED } from './logic/constants';
+import { config } from '../config';
 
 class Square extends PureComponent {
 
     getValue = () => {
         switch (this.props.visibility) {
-            case 'hidden':
-                return 'none';
-            case 'visible':
+            case HIDDEN:
+                if (config.debugMode) return this.props.value;
+                return 'hidden';
+            case VISIBLE:
                 return this.props.value;
-            case 'marked':
+            case MARKED:
                 return 'M';
+            default: throw new Error(`unknown state ${this.state.squareStatus}`);
+        }
+    }
+
+    getClassName = () => {
+        switch (this.props.visibility) {
+            case HIDDEN:
+                return 'square-hidden';
+            case VISIBLE:
+                return 'square-visible';
+            case MARKED:
+                return 'square-marked';
             default: throw new Error(`unknown state ${this.state.squareStatus}`);
         }
     }
@@ -19,7 +34,11 @@ class Square extends PureComponent {
 
         let value = this.getValue();
 
-        let fullClassName = `square square-${this.props.visibility} square-value-${value}`;
+        let fullClassName = `square ${this.getClassName()} square-value-${value}`;
+
+        if (config.debugMode) {
+            fullClassName += ' debug';
+        }
 
         if (this.props.isPositionLost) {
             fullClassName += ' bomb-lost';
@@ -30,7 +49,7 @@ class Square extends PureComponent {
                 className={fullClassName}
 
                 onClick={() => {
-                    if (this.props.clickable) this.props.onLeftClick(this.props.position)
+                    if (this.props.clickable) this.props.onLeftClick(this.props.position, this.props.value, this.props.visibility)
                 }}
 
                 onContextMenu={(ev) => {

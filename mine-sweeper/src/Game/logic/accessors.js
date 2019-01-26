@@ -1,92 +1,87 @@
-export const getNeighborPositions = (boardMap, position) => {
+import { config } from '../../config';
+import { HIDDEN, VISIBLE, MARKED } from './constants';
+import { arePositionEquals } from './utils';
 
-    const rowsLength = boardMap.length;
-    const columnsLength = boardMap[0].length;
+export const getNeighbors = (position) => {
 
-    const isOutOfBounds = (position) => {
+    const isOutOfBounds = (surroundingCandidatePosition) => {
         return (
-            position.x < 0
-            || position.x > (rowsLength - 1)
-            || position.y < 0
-            || position.y > (columnsLength - 1)
+            surroundingCandidatePosition.x < 0
+            || surroundingCandidatePosition.x > (config.rowsLength - 1)
+            || surroundingCandidatePosition.y < 0
+            || surroundingCandidatePosition.y > (config.columnsLength - 1)
         );
     }
 
-    let neighborPositionsRules = [
+    const surroundingCandidatePositions = [
         // upper row
-        (position) => ({
+        {
             x: position.x - 1,
             y: position.y - 1
-        }),
-        (position) => ({
+        },
+        {
             x: position.x,
             y: position.y - 1
-        }),
-        (position) => ({
+        },
+        {
             x: position.x + 1,
             y: position.y - 1
-        }),
+        },
         // middle row
-        (position) => ({
+        {
             x: position.x - 1,
             y: position.y
-        }),
-        (position) => ({
+        },
+        {
             x: position.x + 1,
             y: position.y
-        }),
+        },
         // lower row
-        (position) => ({
+        {
             x: position.x - 1,
             y: position.y + 1
-        }),
-        (position) => ({
+        },
+        {
             x: position.x,
             y: position.y + 1
-        }),
-        (position) => ({
+        },
+        {
             x: position.x + 1,
             y: position.y + 1
-        })
+        }
     ];
 
-    let neighborPositions = []
-
-    for (let rule of neighborPositionsRules) {
-
-        const nextPosition = rule(position);
-
-        if (!isOutOfBounds(nextPosition)) {
-
-            neighborPositions.push(nextPosition);
-
-        }
-
-    }
-
-    return neighborPositions;
+    return surroundingCandidatePositions
+    .filter(candidatePosition => !isOutOfBounds(candidatePosition));
 
 }
 
-//====
+export const getNeighborsHidden = (board, position) => {
 
-export const getNeighborHiddenPositions = (boardMap, position) => {
-
-    return getNeighborPositions(boardMap, position).filter(neighborPosition => {
-        return boardMap[neighborPosition.x][neighborPosition.y].visibility === 'hidden';
+    return getNeighbors(position)
+    .filter(neighbor => {
+        return board[neighbor.x][neighbor.y].visibility === HIDDEN;
     });
 
 };
 
-const getNeighborEmptyPositions = (boardMap, position) => {
-    return getNeighborPositions(boardMap, position).filter(neighborPosition => {
-        return boardMap[neighborPosition.x][neighborPosition.y].value === 0;
+const getNeighborsEmpty = (board, position) => {
+    return getNeighbors(position)
+    .filter(neighbor => {
+        return board[neighbor.x][neighbor.y].value === 0;
+    });
+};
+
+export const getNeighborsMarked = (board, position) => {
+    return getNeighbors(position)
+    .filter(neighbor => {
+        return board[neighbor.x][neighbor.y].visibility === MARKED;
     });
 };
 
 // heavy
 
-export const getAllNeighborEmptyPositions = (boardMap, position, knownEmptyPositions = []) => {
+export const getAllNeighborEmptyPositions = (board, position, knownEmptyPositions = []) => {
 
     if (!knownEmptyPositions.length) {
 
@@ -94,16 +89,15 @@ export const getAllNeighborEmptyPositions = (boardMap, position, knownEmptyPosit
 
     }
 
-    let nextUnknownEmptyPositions = getNeighborEmptyPositions(boardMap, position)
+    let nextUnknownEmptyPositions = getNeighborsEmpty(board, position)
     .filter(neighborPosition => {
-        return boardMap[neighborPosition.x][neighborPosition.y].visibility === 'hidden'
+        return board[neighborPosition.x][neighborPosition.y].visibility === HIDDEN
     })
     .filter(neighborPosition => {
 
         return !knownEmptyPositions.some(knownPosition => {
 
-            return knownPosition.x === neighborPosition.x
-                && knownPosition.y === neighborPosition.y;
+            return arePositionEquals(knownPosition, neighborPosition);
 
         });
 
@@ -117,37 +111,30 @@ export const getAllNeighborEmptyPositions = (boardMap, position, knownEmptyPosit
 
     for (let emptyPosition of nextUnknownEmptyPositions) {
 
-        let next = getAllNeighborEmptyPositions(boardMap, emptyPosition, knownEmptyPositions);
+        let next = getAllNeighborEmptyPositions(board, emptyPosition, knownEmptyPositions);
         knownEmptyPositions = [...next];
     }
 
     return knownEmptyPositions;
 }
 
-export const getEmptyZoneNextNeighbours = (boardMap, emptyZone) => {
+export const getEmptyZoneNextNeighbours = (board, emptyZone) => {
 
     let positionsToDisplay = emptyZone;
     let numberPositionsDiscovered = []
 
     for (let knownEmptyPosition of positionsToDisplay) {
 
-        let numberHiddenNeighbours = getNeighborHiddenPositions(boardMap, knownEmptyPosition)
+        let numberHiddenNeighbours = getNeighborsHidden(board, knownEmptyPosition)
         .filter(numberHiddenNeighbour => {
 
             return !positionsToDisplay.some(knownPosition => {
 
-                return knownPosition.x === numberHiddenNeighbour.x
-                    && knownPosition.y === numberHiddenNeighbour.y
+                return arePositionEquals(knownPosition, numberHiddenNeighbour);
 
-            });
+            }) && !numberPositionsDiscovered.some(numberPosition => {
 
-        })
-        .filter(numberHiddenNeighbour => {
-
-            return !numberPositionsDiscovered.some(numberPosition => {
-
-                return numberPosition.x === numberHiddenNeighbour.x
-                    && numberPosition.y === numberHiddenNeighbour.y
+                return arePositionEquals(numberPosition, numberHiddenNeighbour);
 
             });
 

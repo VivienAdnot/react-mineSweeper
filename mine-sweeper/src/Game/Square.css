@@ -20,7 +20,6 @@
 }
 
 .square-hidden {
-    color: #0c5460;
     background-color: #d1ecf1;
     border: 1px solid;
     border-top-color: #fff;
@@ -49,7 +48,7 @@
     background-repeat: no-repeat;
 }
 
-.square-value-none,
+.square-value-hidden,
 .square-value-0,
 .square-value-B,
 .square-value-M {
@@ -86,4 +85,32 @@
 
 .square-value-8 {
     color: #50575c;
+}
+
+.square-hidden.debug {
+    border: 1px solid;
+    border-top-color: #fff;
+    border-left-color: #fff;
+    border-right-color: #9dd6e1;
+    border-bottom-color: #9dd6e1;
+    background-color: rgba(209,236,241, .6);
+}
+
+.square-value-X.debug {
+    color: transparent;
+}
+
+.square-hidden.debug.square-value-1.debug,
+.square-hidden.debug.square-value-2.debug,
+.square-hidden.debug.square-value-3.debug,
+.square-hidden.debug.square-value-4.debug,
+.square-hidden.debug.square-value-5.debug,
+.square-hidden.debug.square-value-6.debug,
+.square-hidden.debug.square-value-7.debug,
+.square-hidden.debug.square-value-8.debug {
+    color: #ccc;
+}
+
+.square-hidden.debug.square-value-0.debug {
+    color: lightgreen;
 }

@@ -5,5 +5,12 @@ export const getCodeFromPosition = (position) => {
 }
 
 export const getCodeFromPositions = (positions) => {
-    return positions.map(position => this.getCodeFromPosition(position));
+    return positions.map(position => getCodeFromPosition(position));
 }
+
+export const randomNumberBetween = (min, max) =>
+    Math.floor(Math.random() * (max - min + 1)) + min;
+
+export const arePositionEquals = (positionA, positionB) =>
+    positionA.x === positionB.x
+    && positionA.y === positionB.y
