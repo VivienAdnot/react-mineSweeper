@@ -9,7 +9,7 @@ import Rules from './Rules';
 import Drawer from './Drawer';
 import { AppContext } from './AppProvider';
 
-let secretCode = 'audreydiallo';
+let godModsecretCode = 'audreydiallo';
 let secretCodeBuffer = [];
 const winOnNextClickCommand = 'winnext';
 
@@ -67,7 +67,7 @@ const renderMinScreenSizeError = () => {
 class App extends Component {
 
     state = {
-        debug: false
+        godMode: false
     }
 
     componentWillMount() {
@@ -83,14 +83,14 @@ class App extends Component {
         secretCodeBuffer.push(e.key);
         const buffer = secretCodeBuffer.join('');
 
-        if (this.state.debug && stringContains(buffer, winOnNextClickCommand)) {
+        if (this.state.godMode && stringContains(buffer, winOnNextClickCommand)) {
             this.setState({ winNext: true });
         }
 
-        if (stringContains(buffer, secretCode)) {
+        if (stringContains(buffer, godModsecretCode)) {
             secretCodeBuffer = [];
             this.setState((prevState) => ({
-                debug: !prevState.debug,
+                godMode: !prevState.godMode,
                 winNext: false
             }));
         }

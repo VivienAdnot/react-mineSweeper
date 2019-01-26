@@ -339,7 +339,7 @@ class Game extends Component {
                 onLeftClick={this.onSquareLeftClick}
                 onRightClick={this.onSquareRightClick}
                 onDblClick={this.onSquareDoubleClick}
-                debug={this.props.debug}
+                godMode={this.props.godMode}
             ></Square>
         );
 
