@@ -53,6 +53,8 @@ class Game extends Component {
     constructor(props) {
         super(props);
 
+        console.log('game props', props);
+
         this.internals = {
             ...initialInternals()
         };
@@ -343,6 +345,7 @@ class Game extends Component {
                 onLeftClick={this.onSquareLeftClick}
                 onRightClick={this.onSquareRightClick}
                 onDblClick={this.onSquareDoubleClick}
+                debug={this.props.debug}
             ></Square>
         );
 
@@ -403,7 +406,7 @@ class Game extends Component {
         }
 
         return (
-            <div className="game container">
+            <div className="game container" tabIndex="0" onKeyDown={(e) => console.log('hey !')}>
 
                 {titleRibbon}
 

@@ -9,6 +9,9 @@ import Rules from './Rules';
 import Drawer from './Drawer';
 import { AppContext } from './AppProvider';
 
+let secretCode = 'audreydiallo';
+let secretCodeBuffer = [];
+
 const isMobileDevice = () => {
 
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(window.navigator.userAgent);
@@ -21,7 +24,7 @@ const minimumScreenSizeOk = () => {
 
 }
 
-const renderApp = () => {
+const renderApp = (props) => {
 
     return (
         <AppContext.Consumer>
@@ -34,7 +37,7 @@ const renderApp = () => {
                 <Switch>
                     <Route exact path='/' component={Rules}/>
                     <Route path='/rules' component={Rules}/>
-                    <Route path='/game' render={(props) => <Game {...props} context={context} />}/>
+                    <Route path='/game' render={() => <Game debug={props.debug} context={context} />}/>
                 </Switch>
             </div>
         }
@@ -60,13 +63,36 @@ const renderMinScreenSizeError = () => {
 
 class App extends Component {
 
+    state = {
+        debug: false
+    }
+
+    componentWillMount() {
+        document.addEventListener("keydown", this.onKeyPressed.bind(this));
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener("keydown", this.onKeyPressed.bind(this));
+    }
+
+    onKeyPressed(e) {
+        secretCodeBuffer.push(e.key);
+        const str = secretCodeBuffer.join('');
+
+        if (str.indexOf(secretCode) !== -1) {
+            secretCodeBuffer = [];
+            this.setState((prevState) => ({ debug: !prevState.debug}))
+        }
+
+    }
+
     render() {
 
         const ScreenToRender = (minimumScreenSizeOk())
             ? renderApp
             : renderMinScreenSizeError;
 
-        return <ScreenToRender/>
+        return <ScreenToRender debug={this.state.debug}/>
 
     }
 

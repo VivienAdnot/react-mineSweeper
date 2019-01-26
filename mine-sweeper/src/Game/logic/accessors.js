@@ -1,5 +1,5 @@
 import { config } from '../../config';
-import { HIDDEN, VISIBLE, MARKED } from './constants';
+import { HIDDEN, MARKED } from './constants';
 import { arePositionEquals } from './utils';
 
 export const getNeighbors = (position) => {

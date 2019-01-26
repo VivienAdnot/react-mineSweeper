@@ -8,7 +8,7 @@ class Square extends PureComponent {
     getValue = () => {
         switch (this.props.visibility) {
             case HIDDEN:
-                if (config.debugMode) return this.props.value;
+                if (this.props.debug) return this.props.value;
                 return 'hidden';
             case VISIBLE:
                 return this.props.value;
@@ -36,7 +36,7 @@ class Square extends PureComponent {
 
         let fullClassName = `square ${this.getClassName()} square-value-${value}`;
 
-        if (config.debugMode) {
+        if (this.props.debug) {
             fullClassName += ' debug';
         }
 
