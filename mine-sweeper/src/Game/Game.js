@@ -13,7 +13,6 @@ import {
     getAllNeighborEmptyPositions,
     getEmptyZoneNextNeighbours
 } from './logic/accessors';
-import { doWinFast } from './debug';
 import { config } from '../config';
 import { getCodeFromPositions } from './logic/utils';
 import { HIDDEN, VISIBLE, MARKED, BOMB } from './logic/constants';
@@ -297,17 +296,14 @@ class Game extends Component {
                     return square.value !== BOMB && square.visibility === VISIBLE;
                 });
 
-                //console.log('visibleNumberSquaresPerRow', visibleNumberSquaresPerRow, acc + visibleNumberSquaresPerRow.length);
-
                 return acc + visibleNumberSquaresPerRow.length;
             }, 0);
 
-            //console.log('== ?', config.numberSquaresSum === visibleNumberSquares);
             return config.numberSquaresSum === visibleNumberSquares;
         };
 
         // shortcut for debug:
-        if (doWinFast) {
+        if (this.props.winNext) {
             return GAME_WIN;
         }
 
@@ -404,7 +400,7 @@ class Game extends Component {
         }
 
         return (
-            <div className="game container" tabIndex="0" onKeyDown={(e) => console.log('hey !')}>
+            <div className="game container">
 
                 {titleRibbon}
 

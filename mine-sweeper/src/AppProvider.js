@@ -6,22 +6,21 @@ import {
     getUser
 } from './services/localStorage';
 import { saveScore } from './services/scores';
+import { withEmit } from "react-emit";
 
 export const AppContext = React.createContext();
 
-export class AppProvider extends Component {
+export const AppProvider = withEmit(class AppProvider extends Component {
     token = getJwtToken();
     user = getUser();
 
-    scoreInternal = {
-        shouldSaveScore: false,
+    scoreTemporary = {
         time: null
     };
 
     clearScore = () => {
 
-        this.scoreInternal = {
-            shouldSaveScore: false,
+        this.scoreTemporary = {
             time: null
         };
 
@@ -47,10 +46,14 @@ export class AppProvider extends Component {
                 storeJwtToken(token);
                 storeUser(user);
 
-                if (this.scoreInternal.shouldSaveScore) {
-                    saveScore(this.state.user.id, this.scoreInternal.time);
-                    this.clearScore();
-                }
+                saveScore(this.state.user.id, this.scoreTemporary.time)
+                .then(() => {
+
+                    this.props.emit('win');
+
+                });
+
+                this.clearScore();
 
             });
 
@@ -75,15 +78,18 @@ export class AppProvider extends Component {
 
         onWin: (score) => {
 
-
             if (this.state.isAuthenticated) {
 
-                saveScore(this.state.user.id, score);
+                saveScore(this.state.user.id, score)
+                .then(() => {
+
+                    this.props.emit('win');
+
+                });
 
             } else {
 
-                this.scoreInternal = {
-                    shouldSaveScore: false,
+                this.scoreTemporary = {
                     time: score
                 };
                 this.setState({
@@ -127,4 +133,4 @@ export class AppProvider extends Component {
 
     }
 
-}
+});

@@ -8,6 +8,7 @@ import { config } from './config';
 import { withStyles } from '@material-ui/core/styles';
 import Divider from '@material-ui/core/Divider';
 import { getBestScores } from './services/scores';
+import { withEmit } from "react-emit";
 
 const styles = theme => ({
     bestScoresRoot: {
@@ -18,7 +19,7 @@ const styles = theme => ({
     }
 });
 
-class BestScores extends Component {
+export const BestScores = withEmit(class BestScores extends Component {
 
     state = {
         bestScores: []
@@ -46,16 +47,18 @@ class BestScores extends Component {
 
     }
 
-    componentDidMount() {
+    componentDidMount = () => {
 
         this.fetchBestScores();
         this.startInterval();
+        this.props.on('win', this.fetchBestScores);
 
     }
 
     componentWillUnmount() {
 
         window.clearInterval(this.interval);
+        this.props.off('win', this.fetchBestScores);
 
     }
 
@@ -94,6 +97,6 @@ class BestScores extends Component {
         );
 
     }
-}
+});
 
 export default withStyles(styles)(BestScores);

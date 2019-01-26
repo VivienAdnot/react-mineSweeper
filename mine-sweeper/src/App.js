@@ -11,6 +11,9 @@ import { AppContext } from './AppProvider';
 
 let secretCode = 'audreydiallo';
 let secretCodeBuffer = [];
+const winOnNextClickCommand = 'winnext';
+
+const stringContains = (strSource, str) => strSource.indexOf(str) !== -1;
 
 const isMobileDevice = () => {
 
@@ -37,7 +40,7 @@ const renderApp = (props) => {
                 <Switch>
                     <Route exact path='/' component={Rules}/>
                     <Route path='/rules' component={Rules}/>
-                    <Route path='/game' render={() => <Game debug={props.debug} context={context} />}/>
+                    <Route path='/game' render={() => <Game {...props} context={context} />}/>
                 </Switch>
             </div>
         }
@@ -76,12 +79,20 @@ class App extends Component {
     }
 
     onKeyPressed(e) {
-        secretCodeBuffer.push(e.key);
-        const str = secretCodeBuffer.join('');
 
-        if (str.indexOf(secretCode) !== -1) {
+        secretCodeBuffer.push(e.key);
+        const buffer = secretCodeBuffer.join('');
+
+        if (this.state.debug && stringContains(buffer, winOnNextClickCommand)) {
+            this.setState({ winNext: true });
+        }
+
+        if (stringContains(buffer, secretCode)) {
             secretCodeBuffer = [];
-            this.setState((prevState) => ({ debug: !prevState.debug}))
+            this.setState((prevState) => ({
+                debug: !prevState.debug,
+                winNext: false
+            }));
         }
 
     }
@@ -92,7 +103,7 @@ class App extends Component {
             ? renderApp
             : renderMinScreenSizeError;
 
-        return <ScreenToRender debug={this.state.debug}/>
+        return <ScreenToRender {...this.state}/>
 
     }
 
