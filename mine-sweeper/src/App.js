@@ -54,7 +54,7 @@ const renderMinScreenSizeError = () => {
             <div style={{margin:"100px auto 0 auto"}}>
                 <h1 >Sorry, your screen is too small.</h1>
                 <h2>This game is designed for desktop screens.</h2>
-                <h2>The minimum required screen size to be able to play the game is 1200px x 700px.</h2>
+                <h2>The minimum required screen size to be able to play the game is 1200px x 600px.</h2>
             </div>
         </div>
     );

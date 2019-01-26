@@ -6,7 +6,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { config } from './config';
 import { withStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
 import Divider from '@material-ui/core/Divider';
 import { getBestScores } from './services/scores';
 
@@ -25,16 +24,38 @@ class BestScores extends Component {
         bestScores: []
     };
 
-    componentDidMount() {
+    interval;
+
+    // use arrow function to bind this
+    fetchBestScores = () => {
 
         getBestScores()
         .then(({ data: bestScores }) => {
 
-            this.setState(() => ({
+            this.setState({
                 bestScores
-            }));
+            });
 
         });
+
+    }
+
+    startInterval() {
+
+        this.interval = window.setInterval(this.fetchBestScores, 30000);
+
+    }
+
+    componentDidMount() {
+
+        this.fetchBestScores();
+        this.startInterval();
+
+    }
+
+    componentWillUnmount() {
+
+        window.clearInterval(this.interval);
 
     }
 
@@ -73,10 +94,6 @@ class BestScores extends Component {
         );
 
     }
-}
-
-BestScores.propTypes = {
-    classes: PropTypes.object.isRequired
 }
 
 export default withStyles(styles)(BestScores);

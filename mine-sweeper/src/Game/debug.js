@@ -1,3 +1,3 @@
-export const doWinFast = false;
+export const doWinFast = true;
 
 export const _ = undefined;

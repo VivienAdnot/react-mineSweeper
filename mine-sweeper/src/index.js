@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { EmitProvider } from 'react-emit';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { AppProvider } from './AppProvider';
@@ -14,7 +15,9 @@ const Provider = () => (
 );
 
 ReactDOM.render((
-    <BrowserRouter>
-        <Provider/>
-    </BrowserRouter>
+    <EmitProvider>
+        <BrowserRouter>
+            <Provider/>
+        </BrowserRouter>
+    </EmitProvider>
 ), document.getElementById('root'));

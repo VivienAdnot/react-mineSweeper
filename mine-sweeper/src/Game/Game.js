@@ -53,8 +53,6 @@ class Game extends Component {
     constructor(props) {
         super(props);
 
-        console.log('game props', props);
-
         this.internals = {
             ...initialInternals()
         };

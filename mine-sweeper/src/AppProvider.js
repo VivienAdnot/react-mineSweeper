@@ -10,19 +10,12 @@ import { saveScore } from './services/scores';
 export const AppContext = React.createContext();
 
 export class AppProvider extends Component {
-
     token = getJwtToken();
     user = getUser();
 
     scoreInternal = {
         shouldSaveScore: false,
         time: null
-    };
-
-    saveScoreInternal = (score) => {
-
-        saveScore(this.state.user.id, score);
-
     };
 
     clearScore = () => {
@@ -55,7 +48,7 @@ export class AppProvider extends Component {
                 storeUser(user);
 
                 if (this.scoreInternal.shouldSaveScore) {
-                    this.saveScoreInternal(this.scoreInternal.time);
+                    saveScore(this.state.user.id, this.scoreInternal.time);
                     this.clearScore();
                 }
 
@@ -82,9 +75,10 @@ export class AppProvider extends Component {
 
         onWin: (score) => {
 
+
             if (this.state.isAuthenticated) {
 
-                this.saveScoreInternal(score);
+                saveScore(this.state.user.id, score);
 
             } else {
 

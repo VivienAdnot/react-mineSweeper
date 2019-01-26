@@ -20,8 +20,7 @@ export const config = {
     columnsLength,
     bombAmount,
     squaresSum: rowsLength * columnsLength,
-    numberSquaresSum: rowsLength * columnsLength - bombAmount,
-    debugMode: true
+    numberSquaresSum: rowsLength * columnsLength - bombAmount
 };
 
 export const _ = undefined;
