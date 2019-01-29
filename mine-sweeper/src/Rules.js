@@ -17,14 +17,15 @@ const styles = theme => ({
         width: 640
     },
     buttonPlay: {
-        margin: '20px auto'
+
     },
     buttonPlayHref: {
         '&:hover': {
             textDecoration: 'none'
         },
+        marginTop: '20px',
+        textAlign: 'center',
         display: 'block',
-        padding: '8px 16px',
         fontSize: '0.875rem',
         minWidth: '64px',
         boxSizing: 'border-box',
