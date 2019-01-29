@@ -13,11 +13,12 @@ const styles = theme => ({
     content: {
         padding: '0 50px'
     },
+    title: {
+        width: 640,
+        textAlign: 'center'
+    },
     buttonContainer: {
         width: 640
-    },
-    buttonPlay: {
-
     },
     buttonPlayHref: {
         '&:hover': {
@@ -46,7 +47,7 @@ function Rules(props) {
     return (
         <div className={classes.root}>
             <main className={classes.content}>
-                <h1>Instructions for MineSweeper</h1>
+                <h1 className={classes.title}>Instructions for MineSweeper</h1>
 
                 <YouTube videoId="MPKXNLkDz10" opts={{
                     height: '390',
