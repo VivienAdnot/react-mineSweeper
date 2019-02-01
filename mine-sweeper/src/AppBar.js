@@ -9,6 +9,7 @@ import { AppContext } from './AppProvider';
 import { config } from './config';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { Link } from 'react-router-dom';
+import IconButton from '@material-ui/core/IconButton';
 
 const styles = theme => ({
     root: {
@@ -22,7 +23,8 @@ const styles = theme => ({
         flex: 1
     },
     title: {
-        marginRight: '50px'
+        marginLeft: '40px',
+        marginRight: '110px'
     },
     btnHref: {
         '&:hover': {
@@ -74,6 +76,9 @@ function ButtonAppBar(props) {
                 {(context) =>
                     <AppBar position="fixed" className={classes.appBar} color="primary">
                         <Toolbar>
+                            <Link to='/rules'>
+                                <img src={require('./img/bigmine.png')} />
+                            </Link>
                             <Typography className={classes.title} variant="title" color="inherit" noWrap>
                                 {config.title}
                             </Typography>

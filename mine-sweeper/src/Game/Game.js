@@ -16,6 +16,7 @@ import {
 import { config } from '../config';
 import { getCodeFromPositions } from './logic/utils';
 import { HIDDEN, VISIBLE, MARKED, BOMB } from './logic/constants';
+import Button from '@material-ui/core/Button';
 
 export const GAME_READY = 0;
 export const GAME_PLAYING = 1;
@@ -425,9 +426,9 @@ class Game extends Component {
                 </div>
 
                 <div className="result">
-                    <button className="play-again" onClick={this.resetGame}>
+                    <Button variant="contained" className="play-again" onClick={this.resetGame}>
                         Restart game
-                    </button>
+                    </Button>
                 </div>
             </div>
         );
