@@ -9,7 +9,7 @@ import { AppContext } from './AppProvider';
 import { config } from './config';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { Link } from 'react-router-dom';
-import IconButton from '@material-ui/core/IconButton';
+import logo from './img/bigmine.png';
 
 const styles = theme => ({
     root: {
@@ -77,7 +77,7 @@ function ButtonAppBar(props) {
                     <AppBar position="fixed" className={classes.appBar} color="primary">
                         <Toolbar>
                             <Link to='/rules'>
-                                <img src={require('./img/bigmine.png')} />
+                                <img src={logo} />
                             </Link>
                             <Typography className={classes.title} variant="title" color="inherit" noWrap>
                                 {config.title}
