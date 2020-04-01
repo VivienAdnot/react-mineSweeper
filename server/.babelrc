@@ -1,19 +1,15 @@
 {
-    "presets": [
-        "env",
-        "stage-2"
-    ],
-    "plugins": [
-        [
-            "module-resolver", {
-                "root": ["./src"],
-                "alias": {
-                    "config": "./config/config"
-                }
-            }
-        ]
-    ],
-    "ignore": [
-        "node_modules/*"
+  "presets": ["@babel/preset-env"],
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "root": ["./src"],
+        "alias": {
+          "config": "./config/config"
+        }
+      }
     ]
+  ],
+  "ignore": ["node_modules/*"]
 }
