@@ -2,17 +2,17 @@
   "name": "react-minesweeper",
   "version": "1.0.0",
   "scripts": {
-    "start": "pm2 startOrReload ./ecosystem.config.js --update-env",
-    "fixtures": "./maintenance/rethinkdb/run-fixtures.sh",
-    "rethinkdb-setup": "nodemon --exec babel-node ./maintenance/rethinkdb/run.js reset"
+    "start": "pm2 startOrReload ./ecosystem.config.js --update-env"
   },
   "author": "Vivien Adnot",
   "dependencies": {
+    "@babel/core": "^7.18.10",
+    "@babel/node": "^7.18.10",
+    "@babel/preset-env": "^7.18.10",
+    "babel-plugin-module-resolver": "^4.1.0",
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
     "boom": "^7.2.0",
-    "chalk": "^2.4.1",
-    "commander": "^2.15.1",
     "cors": "^2.8.4",
     "express": "^4.16.2",
     "jsonwebtoken": "^8.2.2",
@@ -20,16 +20,11 @@
     "sha1": "^1.1.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.0",
-    "@babel/node": "^7.8.7",
-    "@babel/preset-env": "^7.9.0",
-    "@babel/preset-es2015": "^7.0.0-beta.53",
-    "babel-plugin-module-resolver": "^4.0.0",
-    "eslint": "^4.18.1",
-    "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-import-resolver-babel-module": "^4.0.0",
-    "eslint-plugin-babel": "^4.1.2",
-    "eslint-plugin-import": "^2.9.0",
-    "nodemon": "^2.0.2"
+    "eslint": "^8.21.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-import-resolver-babel-module": "^5.3.1",
+    "eslint-plugin-babel": "^5.3.1",
+    "eslint-plugin-import": "^2.26.0",
+    "pm2": "^5.2.0"
   }
 }
