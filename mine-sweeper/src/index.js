@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { EmitProvider } from 'react-emit';
 import { BrowserRouter } from 'react-router-dom';
-import App from './App';
+import App from './App.jsx';
 import { AppProvider } from './AppProvider';
 import './style/index.css';
 

@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
+import { withEmit } from "react-emit";
+
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { config } from '../config';
 import { withStyles } from '@material-ui/core/styles';
 import Divider from '@material-ui/core/Divider';
+
+import { config } from '../config';
 import { getBestScores } from '../services/scores';
-import { withEmit } from "react-emit";
+
 
 const styles = theme => ({
     bestScoresRoot: {

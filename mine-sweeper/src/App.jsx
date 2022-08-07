@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import AppBar from './components/Screen/AppBar';
-import './style/App.css';
-import DisplayRegisterDialogIfNeeded from './components/Auth/Register/DisplayRegisterDialogIfNeeded';
-import DisplayLoginDialogIfNeeded from './components/Auth/Login/DisplayLoginDialogIfNeeded';
-import Game from './components/Game/Game';
-import Rules from './views/Rules';
-import Drawer from './components/Screen/Drawer';
+
 import { AppContext } from './AppProvider';
+import AppBar from './components/Screen/AppBar.jsx';
+import DisplayRegisterDialogIfNeeded from './components/Auth/Register/DisplayRegisterDialogIfNeeded.jsx';
+import DisplayLoginDialogIfNeeded from './components/Auth/Login/DisplayLoginDialogIfNeeded.jsx';
+import Game from './components/Game/Game.jsx';
+import Rules from './views/Rules.jsx';
+import Drawer from './components/Screen/Drawer.jsx';
+
+import './style/App.css';
+
 
 let godModsecretCode = 'audreydiallo';
 let secretCodeBuffer = [];

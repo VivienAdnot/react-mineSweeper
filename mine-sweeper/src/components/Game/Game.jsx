@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import '../../style/Game.css';
-import Square from './Square';
+import Square from './Square.jsx';
 import {
     buildBombPositions,
     buildBoard,

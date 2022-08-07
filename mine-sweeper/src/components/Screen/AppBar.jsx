@@ -1,14 +1,17 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+
 import { AppContext } from '../../AppProvider';
 import { config } from '../../config';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import { Link } from 'react-router-dom';
+
 import logo from '../../img/bigmine.png';
 
 const styles = theme => ({

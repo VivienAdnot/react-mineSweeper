@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
+
+import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 
-import { requestAuthenticateUser } from '../../../services/users';
+import { requestCreateUser } from '../../../services/users';
 
 const styles = theme => ({
     container: {
@@ -20,11 +21,13 @@ const styles = theme => ({
     }
 });
 
-class LoginForm extends Component {
+class RegisterForm extends Component {
 
     state = {
+        fullName: '',
         email: '',
-        password: ''
+        password: '',
+        confirmationPassword: ''
     };
 
     handleInputChange = event => {
@@ -42,16 +45,18 @@ class LoginForm extends Component {
     handleSubmit = event => {
         event.preventDefault();
 
-        requestAuthenticateUser({
+        requestCreateUser({
+            fullName: this.state.fullName,
             email: this.state.email,
-            password: this.state.password
+            password: this.state.password,
+            confirmationPassword: this.state.confirmationPassword
         })
-        .then(({ data: userWithToken }) => {
+        .then(({ data: userCreatedWithToken }) => {
 
-            this.props.onUserAuthenticated(userWithToken);
+            this.props.onUserCreated(userCreatedWithToken);
 
         })
-        .catch(err => console.error('ERROR LOGIN USER', err));
+        .catch(err => console.error('ERROR CREATE USER', err));
     };
 
     render() {
@@ -60,6 +65,14 @@ class LoginForm extends Component {
         return (
             <div>
                 <form className={classes.container} onSubmit={this.handleSubmit}>
+                    <TextField
+                        className={classes.textField}
+                        id="fullName"
+                        label="Full Name"
+                        margin="normal"
+                        fullWidth
+                        onChange={this.handleInputChange}
+                    />
                     <TextField
                         className={classes.textField}
                         id="email"
@@ -78,6 +91,15 @@ class LoginForm extends Component {
                         fullWidth
                         onChange={this.handleInputChange}
                     />
+                    <TextField
+                        className={classes.textField}
+                        id="confirmationPassword"
+                        label="Confirmation Password"
+                        type="password"
+                        margin="normal"
+                        fullWidth
+                        onChange={this.handleInputChange}
+                    />
                     <Button
                         className={classes.button}
                         variant="raised"
@@ -85,7 +107,7 @@ class LoginForm extends Component {
                         label="Submit"
                         type="submit"
                     >
-                        Login
+                        Create account
                     </Button>
                 </form>
             </div>
@@ -93,9 +115,9 @@ class LoginForm extends Component {
     }
 }
 
-LoginForm.propTypes = {
+RegisterForm.propTypes = {
     classes: PropTypes.object.isRequired,
-    onUserAuthenticated: PropTypes.func
+    onUserCreated: PropTypes.func
 };
 
-export default withStyles(styles)(LoginForm);
+export default withStyles(styles)(RegisterForm);

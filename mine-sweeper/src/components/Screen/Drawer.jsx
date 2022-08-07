@@ -1,10 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import Drawer from '@material-ui/core/Drawer';
-import { withStyles } from '@material-ui/core/styles';
-import BestScores from '../BestScores';
-import { config } from '../../config';
 import Divider from '@material-ui/core/Divider';
+import { withStyles } from '@material-ui/core/styles';
+
+import BestScores from '../BestScores.jsx';
+import { config } from '../../config';
+
 
 const styles = theme => ({
     drawer: {
