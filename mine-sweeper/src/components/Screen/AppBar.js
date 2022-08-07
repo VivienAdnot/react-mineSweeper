@@ -5,11 +5,11 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import { AppContext } from './AppProvider';
-import { config } from './config';
+import { AppContext } from '../../AppProvider';
+import { config } from '../../config';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { Link } from 'react-router-dom';
-import logo from './img/bigmine.png';
+import logo from '../../img/bigmine.png';
 
 const styles = theme => ({
     root: {

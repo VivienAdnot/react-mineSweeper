@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './Game.css';
+import '../../style/Game.css';
 import Square from './Square';
 import {
     buildBombPositions,
@@ -13,7 +13,7 @@ import {
     getAllNeighborEmptyPositions,
     getEmptyZoneNextNeighbours
 } from './logic/accessors';
-import { config } from '../config';
+import { config } from '../../config';
 import { getCodeFromPositions } from './logic/utils';
 import { HIDDEN, VISIBLE, MARKED, BOMB } from './logic/constants';
 import Button from '@material-ui/core/Button';

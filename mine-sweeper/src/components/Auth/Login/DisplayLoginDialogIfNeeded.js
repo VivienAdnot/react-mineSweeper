@@ -1,6 +1,6 @@
 import React from 'react';
 import LoginDialog from './LoginDialog';
-import { AppContext } from '../AppProvider';
+import { AppContext } from '../../../AppProvider';
 
 const DisplayLoginDialogIfNeeded = (props) => (
     <div>

@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
-import './Square.css';
+import '../../style/Square.css';
 import { HIDDEN, VISIBLE, MARKED } from './logic/constants';
-import { config } from '../config';
 
 class Square extends PureComponent {
 

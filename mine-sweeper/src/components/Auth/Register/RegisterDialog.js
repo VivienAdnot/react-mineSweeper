@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import RegisterForm from './RegisterForm';
-import { AppContext } from '../AppProvider';
+import { AppContext } from '../../../AppProvider';
 
 class RegisterDialog extends Component {
 

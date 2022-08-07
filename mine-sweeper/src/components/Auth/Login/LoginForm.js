@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 
-import { requestAuthenticateUser } from '../services/users';
+import { requestAuthenticateUser } from '../../../services/users';
 
 const styles = theme => ({
     container: {

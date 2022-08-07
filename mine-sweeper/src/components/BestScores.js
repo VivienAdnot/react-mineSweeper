@@ -4,10 +4,10 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { config } from './config';
+import { config } from '../config';
 import { withStyles } from '@material-ui/core/styles';
 import Divider from '@material-ui/core/Divider';
-import { getBestScores } from './services/scores';
+import { getBestScores } from '../services/scores';
 import { withEmit } from "react-emit";
 
 const styles = theme => ({

@@ -4,7 +4,7 @@ import { EmitProvider } from 'react-emit';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { AppProvider } from './AppProvider';
-import './index.css';
+import './style/index.css';
 
 // split is necessary to fix this problem
 // https://github.com/ReactTraining/react-router/issues/6072

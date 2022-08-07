@@ -1,6 +1,6 @@
 import React from 'react';
 import RegisterDialog from './RegisterDialog';
-import { AppContext } from '../AppProvider';
+import { AppContext } from '../../../AppProvider';
 
 const DisplayRegisterDialogIfNeeded = (props) => (
     <div>
