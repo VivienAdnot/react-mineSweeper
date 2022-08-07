@@ -1,4 +1,4 @@
-import { config } from '../../../config';
+import { config } from '../../config';
 import { HIDDEN, MARKED } from './constants';
 import { arePositionEquals } from './utils';
 

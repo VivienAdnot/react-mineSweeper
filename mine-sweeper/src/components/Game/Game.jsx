@@ -5,17 +5,17 @@ import {
     buildBombPositions,
     buildBoard,
     clearBoard
-} from './logic/createMap';
+} from '../../services/logic/createMap';
 import {
     getNeighbors,
     getNeighborsHidden,
     getNeighborsMarked,
     getAllNeighborEmptyPositions,
     getEmptyZoneNextNeighbours
-} from './logic/accessors';
+} from '../../services/logic/accessors';
 import { config } from '../../config';
-import { getCodeFromPositions } from './logic/utils';
-import { HIDDEN, VISIBLE, MARKED, BOMB } from './logic/constants';
+import { getCodeFromPositions } from '../../services/logic/utils';
+import { HIDDEN, VISIBLE, MARKED, BOMB } from '../../services/logic/constants';
 import Button from '@material-ui/core/Button';
 
 export const GAME_READY = 0;

@@ -1,5 +1,5 @@
 import { getNeighbors } from './accessors';
-import { config } from '../../../config';
+import { config } from '../../config';
 import { HIDDEN, BOMB } from './constants';
 import { randomNumberBetween, arePositionEquals } from './utils';
 
